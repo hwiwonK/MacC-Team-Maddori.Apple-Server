@@ -1,0 +1,22 @@
+{
+  "name": "macc-team-maddori.apple-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hwiwonK/MacC-Team-Maddori.Apple-Server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hwiwonK/MacC-Team-Maddori.Apple-Server/issues"
+  },
+  "homepage": "https://github.com/hwiwonK/MacC-Team-Maddori.Apple-Server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
