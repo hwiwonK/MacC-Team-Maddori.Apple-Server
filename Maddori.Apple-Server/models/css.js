@@ -28,6 +28,14 @@ module.exports = function(sequelize, DataTypes){
                 },
                 onDelete: 'CASCADE',
                 hooks: true
+            }),
+            css.belongsTo(models.reflection, {
+                foreignKey: {
+                    name: 'reflection_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
             })
         }
     }

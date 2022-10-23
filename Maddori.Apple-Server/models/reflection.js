@@ -26,6 +26,14 @@ module.exports = function(sequelize, DataTypes){
                     name: 'recent_reflection_id',
                     allowNull: true
                 },
+            }),
+            reflection.hasMany(models.css, {
+                foreignKey: {
+                    name: 'reflection_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
             })
         }
     }
