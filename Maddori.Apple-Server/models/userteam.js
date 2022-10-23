@@ -3,14 +3,16 @@ const { Model } = require("sequelize");
 
 module.exports = function(sequelize, DataTypes){
     class userteam extends Model {
-        
-        // static associate(models) {
-        //     // define association here
-        //     UserTeam.belongsTo(models.User, {
-        //         foreignKey: 'user_id',
-        //         onDelete: 'CASCADE'
-        //     })
-        // }
+        static associate(models) {
+            userteam.belongsTo(models.user, {
+                foreignKey: {
+                    name: 'user_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            })
+        }
     }
 
     userteam.init(

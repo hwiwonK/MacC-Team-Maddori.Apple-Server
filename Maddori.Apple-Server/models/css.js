@@ -5,7 +5,22 @@ module.exports = function(sequelize, DataTypes){
     class css extends Model {
         
         static associate(models) {
-
+            css.belongsTo(models.user, {
+                foreignKey: {
+                    name: 'from_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            }),
+            css.belongsTo(models.user, {
+                foreignKey: {
+                    name: 'to_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            })
         }
     }
 
