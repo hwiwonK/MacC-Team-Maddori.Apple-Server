@@ -1,11 +1,32 @@
 'use strict';
 const { Model } = require("sequelize");
 
+
+// TODO: reflection 삭제 시 current_reflection_id가 연관된 team 삭제되지 않도록 수정
 module.exports = function(sequelize, DataTypes){
     class reflection extends Model {
         
         static associate(models) {
-
+            reflection.belongsTo(models.team, {
+                foreignKey: {
+                    name: 'team_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            }),
+            reflection.hasOne(models.team, {
+                foreignKey: {
+                    name: 'current_reflection_id',
+                    allowNull: false
+                },
+            }),
+            reflection.hasOne(models.team, {
+                foreignKey: {
+                    name: 'recent_reflection_id',
+                    allowNull: true
+                },
+            })
         }
     }
 

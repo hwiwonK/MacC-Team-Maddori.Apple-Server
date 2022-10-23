@@ -3,8 +3,43 @@ const { Model } = require("sequelize");
 
 module.exports = function(sequelize, DataTypes){
     class team extends Model {
-        
         static associate(models) {
+            models.team.hasMany(models.userteam, {
+                foreignKey: {
+                    name: 'team_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            }),
+            models.team.hasMany(models.css, {
+                foreignKey: {
+                    name: 'team_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            }),
+            models.team.hasMany(models.reflection, {
+                foreignKey: {
+                    name: 'team_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
+            }),
+            models.team.belongsTo(models.reflection, {
+                foreignKey: {
+                    name: 'current_reflection_id',
+                    allowNull: false
+                },
+            }),
+            models.team.belongsTo(models.reflection, {
+                foreignKey: {
+                    name: 'recent_reflection_id',
+                    allowNull: true
+                },
+            })
 
         }
     }

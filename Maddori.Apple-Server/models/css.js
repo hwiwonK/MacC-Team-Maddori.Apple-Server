@@ -20,6 +20,14 @@ module.exports = function(sequelize, DataTypes){
                 },
                 onDelete: 'CASCADE',
                 hooks: true
+            }),
+            css.belongsTo(models.team, {
+                foreignKey: {
+                    name: 'team_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
             })
         }
     }
