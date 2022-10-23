@@ -1,6 +1,5 @@
 'use strict';
 const { Model } = require("sequelize");
-// user 테이블 만들어서 User 객체로 저장하기
 
 module.exports = function(sequelize, DataTypes){
     class userteam extends Model {
