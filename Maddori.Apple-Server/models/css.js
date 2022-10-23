@@ -2,14 +2,14 @@
 const { Model } = require("sequelize");
 
 module.exports = function(sequelize, DataTypes){
-    class reflection extends Model {
+    class css extends Model {
         
         static associate(models) {
 
         }
     }
 
-    reflection.init(
+    css.init(
         {
             id: {
                 field: "id",
@@ -17,25 +17,36 @@ module.exports = function(sequelize, DataTypes){
                 primaryKey: true,
                 autoIncrement: true
             },
-            reflection_name: {
-                field: "reflection_name",
+            type: {
+                field: "type",
+                type: DataTypes.ENUM("Continue", "Stop"),
+                allowNull: false,
+                defaultValue: "Continue"
+            },
+            keyword: {
+                field: "keyword",
                 type: DataTypes.STRING(15),
                 allowNull: false
             },
-            date: {
-                field: "date",
-                type: DataTypes.DATE,
+            content: {
+                field: "content",
+                type: DataTypes.STRING(200),
                 allowNull: true
             },
-            state: {
-                field: "state",
-                type: DataTypes.ENUM("SettingRequired", "Before", "Progressing", "Done"),
+            is_favorite: {
+                field: "is_favorite",
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: "SettingRequired"
+                defaultValue: false
+            },
+            start_content: {
+                field: "start_content",
+                type: DataTypes.STRING(200),
+                allowNull: true
             }
         }, {
             sequelize,
-            modelName: "reflection",
+            modelName: "css",
             timestamps: false,
             freezeTableName: true,
             charset: "utf8",
@@ -43,5 +54,5 @@ module.exports = function(sequelize, DataTypes){
             underscored: true
         }
     );
-    return reflection;
+    return css;
 }
