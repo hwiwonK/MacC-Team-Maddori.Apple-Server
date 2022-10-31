@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             }),
-            models.team.hasMany(models.css, {
+            models.team.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'team_id',
                     allowNull: false

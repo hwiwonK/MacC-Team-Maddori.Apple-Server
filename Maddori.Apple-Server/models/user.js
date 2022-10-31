@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             })
-            models.user.hasMany(models.css, {
+            models.user.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'from_id',
                     allowNull: false
@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             }),
-            models.user.hasMany(models.css, {
+            models.user.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'to_id',
                     allowNull: false

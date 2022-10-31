@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes){
                     allowNull: true
                 },
             }),
-            reflection.hasMany(models.css, {
+            reflection.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'reflection_id',
                     allowNull: false
