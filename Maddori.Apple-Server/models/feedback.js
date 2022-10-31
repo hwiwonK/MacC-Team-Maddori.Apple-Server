@@ -8,9 +8,9 @@ module.exports = function(sequelize, DataTypes){
             feedback.belongsTo(models.user, {
                 foreignKey: {
                     name: 'from_id',
-                    allowNull: false
+                    allowNull: true
                 },
-                onDelete: 'CASCADE',
+                onDelete: 'SET NULL',
                 hooks: true
             }),
             feedback.belongsTo(models.user, {

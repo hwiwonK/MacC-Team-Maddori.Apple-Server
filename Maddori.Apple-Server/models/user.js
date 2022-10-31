@@ -15,9 +15,9 @@ module.exports = function(sequelize, DataTypes){
             models.user.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'from_id',
-                    allowNull: false
+                    allowNull: true
                 },
-                onDelete: 'CASCADE',
+                onDelete: 'SET NULL',
                 hooks: true
             }),
             models.user.hasMany(models.feedback, {
