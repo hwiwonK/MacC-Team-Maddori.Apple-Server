@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             }),
-            models.team.hasMany(models.css, {
+            models.team.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'team_id',
                     allowNull: false
@@ -67,8 +67,8 @@ module.exports = function(sequelize, DataTypes){
             modelName: "team",
             timestamps: false,
             freezeTableName: true,
-            charset: "utf8",
-            collate: "utf8_general_ci",
+            charset: "utf8mb4",
+            collate: "utf8mb4_general_ci",
             underscored: true
         }
     );

@@ -2,18 +2,18 @@
 const { Model } = require("sequelize");
 
 module.exports = function(sequelize, DataTypes){
-    class css extends Model {
+    class feedback extends Model {
         
         static associate(models) {
-            css.belongsTo(models.user, {
+            feedback.belongsTo(models.user, {
                 foreignKey: {
                     name: 'from_id',
-                    allowNull: false
+                    allowNull: true
                 },
-                onDelete: 'CASCADE',
+                onDelete: 'SET NULL',
                 hooks: true
             }),
-            css.belongsTo(models.user, {
+            feedback.belongsTo(models.user, {
                 foreignKey: {
                     name: 'to_id',
                     allowNull: false
@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             }),
-            css.belongsTo(models.team, {
+            feedback.belongsTo(models.team, {
                 foreignKey: {
                     name: 'team_id',
                     allowNull: false
@@ -29,7 +29,7 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             }),
-            css.belongsTo(models.reflection, {
+            feedback.belongsTo(models.reflection, {
                 foreignKey: {
                     name: 'reflection_id',
                     allowNull: false
@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes){
         }
     }
 
-    css.init(
+    feedback.init(
         {
             id: {
                 field: "id",
@@ -77,13 +77,13 @@ module.exports = function(sequelize, DataTypes){
             }
         }, {
             sequelize,
-            modelName: "css",
+            modelName: "feedback",
             timestamps: false,
             freezeTableName: true,
-            charset: "utf8",
-            collate: "utf8_general_ci",
+            charset: "utf8mb4",
+            collate: "utf8mb4_general_ci",
             underscored: true
         }
     );
-    return css;
+    return feedback;
 }

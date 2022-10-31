@@ -12,15 +12,15 @@ module.exports = function(sequelize, DataTypes){
                 onDelete: 'CASCADE',
                 hooks: true
             })
-            models.user.hasMany(models.css, {
+            models.user.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'from_id',
-                    allowNull: false
+                    allowNull: true
                 },
-                onDelete: 'CASCADE',
+                onDelete: 'SET NULL',
                 hooks: true
             }),
-            models.user.hasMany(models.css, {
+            models.user.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'to_id',
                     allowNull: false
@@ -49,8 +49,8 @@ module.exports = function(sequelize, DataTypes){
             modelName: "user",
             timestamps: false,
             freezeTableName: true,
-            charset: "utf8",
-            collate: "utf8_general_ci",
+            charset: "utf8mb4",
+            collate: "utf8mb4_general_ci",
             underscored: true
         }
     );

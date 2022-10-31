@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes){
                     allowNull: true
                 },
             }),
-            reflection.hasMany(models.css, {
+            reflection.hasMany(models.feedback, {
                 foreignKey: {
                     name: 'reflection_id',
                     allowNull: false
@@ -67,8 +67,8 @@ module.exports = function(sequelize, DataTypes){
             modelName: "reflection",
             timestamps: false,
             freezeTableName: true,
-            charset: "utf8",
-            collate: "utf8_general_ci",
+            charset: "utf8mb4",
+            collate: "utf8mb4_general_ci",
             underscored: true
         }
     );
