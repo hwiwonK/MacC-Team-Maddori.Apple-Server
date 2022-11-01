@@ -1,5 +1,7 @@
 'use strict';
 
+const {user, team, userteam, reflection, feedback} = require('../models');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
@@ -91,6 +93,25 @@ module.exports = {
     // reflection data insert
     const reflectionId1 = await queryInterface.bulkInsert('reflection', reflections);
 
+    // team current, recent_reflection_id update
+    await team.update({
+      current_reflection_id : reflectionId1 + 1,
+      recent_reflection_id : reflectionId1
+    },
+    {
+      where : {
+        team_name: '맛쟁이사과처럼'
+      }
+    });
+
+    await team.update({
+      current_reflection_id : reflectionId1 + 2,
+    },
+    {
+      where : {
+        team_name: 'Academy🍎'
+      }
+    });
   },
 
   async down (queryInterface, Sequelize) {
