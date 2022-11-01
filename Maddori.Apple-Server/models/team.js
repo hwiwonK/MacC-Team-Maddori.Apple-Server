@@ -31,7 +31,7 @@ module.exports = function(sequelize, DataTypes){
             models.team.belongsTo(models.reflection, {
                 foreignKey: {
                     name: 'current_reflection_id',
-                    allowNull: false
+                    allowNull: true
                 },
             }),
             models.team.belongsTo(models.reflection, {
