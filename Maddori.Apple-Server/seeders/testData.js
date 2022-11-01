@@ -249,5 +249,6 @@ module.exports = {
     await queryInterface.bulkDelete('team', null, {});
     await queryInterface.bulkDelete('userteam', null, {});
     await queryInterface.bulkDelete('reflection', null, {});
+    await queryInterface.bulkDelete('feedback', null, {});
   }
 };
