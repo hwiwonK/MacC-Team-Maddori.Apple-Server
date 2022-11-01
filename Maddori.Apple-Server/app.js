@@ -1,9 +1,11 @@
 const express = require('express')
 const app = express()
-// app.router({mergeParams: true });
 
 // sequelize 연결
 const { sequelize } = require('./models');
+
+// body-parser 사용 (json 요청을 받기 위함)
+app.use(express.json());
 
 // database 연결
 sequelize.sync({ force: false })
