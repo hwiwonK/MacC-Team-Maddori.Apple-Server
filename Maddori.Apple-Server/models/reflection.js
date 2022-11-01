@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes){
             reflection.hasOne(models.team, {
                 foreignKey: {
                     name: 'current_reflection_id',
-                    allowNull: false
+                    allowNull: true
                 },
             }),
             reflection.hasOne(models.team, {
