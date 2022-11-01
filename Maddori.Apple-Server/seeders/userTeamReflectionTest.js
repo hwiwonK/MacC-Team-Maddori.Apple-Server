@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-
+    // user table & team data
     const users = [
       {
         username: 'Mary'
@@ -21,7 +21,6 @@ module.exports = {
         username: 'Id'
       }
     ]
-
     const teams = [
       {
         team_name: '맛쟁이사과처럼',
@@ -33,14 +32,12 @@ module.exports = {
       }
     ]
 
-    // user table & team table
+    // user table & team insert data
     const userId1 = await queryInterface.bulkInsert("user", users, { returning: ["id"]});
     const teamId1 = await queryInterface.bulkInsert("team", teams, { returning: ["id"]});
 
-    
-
-    // userteam table
-    await queryInterface.bulkInsert('userteam', [
+    // userteam data
+    const userteams = [
       {
         user_id: userId1,
         team_id: teamId1,
@@ -65,11 +62,13 @@ module.exports = {
         user_id: userId1 + 4,
         team_id: teamId1 + 1,
         admin:true
-      },
-    ]);
+      }
+    ]
+    // userteam insert data
+    await queryInterface.bulkInsert('userteam', userteams);
 
-    // reflection table
-    await queryInterface.bulkInsert('reflection', [
+    // reflection data
+    const reflections = [
       {
         team_id: teamId1,
         reflection_name: '맛쟁이사과처럼 sprint1',
@@ -87,7 +86,10 @@ module.exports = {
         date: "2022.11.5",
         state: "Before"
       }
-    ]);
+    ]
+
+    // reflection data insert
+    const reflectionId1 = await queryInterface.bulkInsert('reflection', reflections);
 
   },
 
