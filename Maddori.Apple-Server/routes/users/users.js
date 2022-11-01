@@ -55,7 +55,31 @@ async function userJoinTeam(req, res, next) {
     }
 }
 
+async function userLeaveTeam(req, res, next) {
+    console.log("유저 팀 탈퇴");
+    
+    try {
+        const deletedUserTeam = await userteam.destroy({
+            where : {
+                user_id: req.header('user_id'),
+                team_id: req.params.team_id
+            }
+        });
+        // TODO: 삭제가 제대로 수행 안됐을 경우 에러 처리 추가
+        console.log(deletedUserTeam);
+        if (deletedUserTeam == 1) {
+            res.status(200).send("success");
+        } else {
+            res.status(202).send("no such data");
+        }
+
+    } catch(error) {
+        res.status(500).send(error);
+    }
+}
+
 module.exports = {
     userLogin,
-    userJoinTeam
+    userJoinTeam,
+    userLeaveTeam
 };
