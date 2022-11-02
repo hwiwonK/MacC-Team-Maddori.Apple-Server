@@ -14,21 +14,16 @@ function generateCode() {
 
 // 팀 invitation_code 중복 여부 체크
 function checkDuplicateCode(createdTeamCode) {
-    try {
-        const duplicateCode = team.findOne({
-            where : {
-                invitation_code: createdTeamCode
-            }
-        });
-        if (duplicateCode == null) {
-            console.log("Code duplicate");
-            return true;
+    const duplicateCode = team.findOne({
+        where : {
+            invitation_code: createdTeamCode
         }
-        return false;
-    } catch (error){
-        // TODO: 에러 처리 수정
-        throw error;
+    });
+    if (duplicateCode == null) {
+        console.log("Code duplicate");
+        return true;
     }
+    return false;
 }
 
 // request data : user_id, team_name
