@@ -55,7 +55,7 @@ module.exports = function(sequelize, DataTypes){
             team_name: {
                 field: "team_name",
                 type: DataTypes.STRING(10),
-                allowNull: true
+                allowNull: false
             },
             invitation_code: {
                 field: "invitation_code",

@@ -37,7 +37,7 @@ function checkDuplicateCode(createdTeamCode) {
 async function createTeam(req, res) {
     console.log("팀 생성하기");
     const teamContent = req.body;
-    console.log(teamContent);
+    // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
         // 생성된 팀 코드가 중복되지 않을 때까지 반복
@@ -51,22 +51,16 @@ async function createTeam(req, res) {
             team_name: teamContent.team_name,
             invitation_code: createdTeamCode
         });
-        console.log(createdTeam);
-
         // 팀 생성 후 첫 번째 회고 생성
         const createdReflection = await reflection.create({
-            reflection_name: "널 허용 하기",
             team_id: createdTeam.id
         });
-        console.log(createdReflection);
-
         // 유저의 팀 합류 및 리더 설정
         const createdUserTeam = await userteam.create({
             user_id: req.header('user_id'),
             team_id: createdTeam.id,
             admin: true
         });
-        console.log(createdUserTeam);
         res.status(201).json(createdTeam);
     } catch (error) {
         // TODO: 에러 처리 수정
