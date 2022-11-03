@@ -50,6 +50,14 @@ async function createTeam(req, res) {
         const createdReflection = await reflection.create({
             team_id: createdTeam.id
         });
+        // 현재 팀의 current_reflection_id 업데이트
+        const updatedTeam = await team.update({
+            current_reflection_id: createdReflection.id
+        }, {
+            where : {
+                id: createdTeam.id
+            }
+        });
         // 유저의 팀 합류 및 리더 설정
         const createdUserTeam = await userteam.create({
             user_id: req.header('user_id'),
@@ -63,6 +71,39 @@ async function createTeam(req, res) {
     }
 }
 
+// request data : user_id, team_id
+// response data : team_id, team_name, invitation_code, admin
+// 팀의 정보 가져오기
+async function getTeamInformation(req, res, next) {
+    console.log("팀의 정보 가져오기");
+
+    try {
+        // 팀의 team_name, invitation_code
+        const teamBasicInformation = await team.findByPk(req.params.team_id);
+        // 유저가 팀의 리더인지 확인
+        const teamLeader = await userteam.findOne({
+            where : {
+                user_id : req.header('user_id'),
+                team_id : req.params.team_id
+            },
+            raw : true
+        });
+        // 위 데이터 중 필요한 부분을 합친 response 데이터 만들기
+        const teamFinalInformation = {
+            team_id : req.params.team_id,
+            team_name : teamBasicInformation.team_name,
+            invitation_code : teamBasicInformation.invitation_code,
+            admin : teamLeader.admin
+        }
+        res.status(200).json(teamFinalInformation);
+
+    } catch(error) {
+        // TODO: 에러 처리 수정
+        res.status(500).send(error);
+    }
+}
+
 module.exports = {
-    createTeam
+    createTeam,
+    getTeamInformation
 };
