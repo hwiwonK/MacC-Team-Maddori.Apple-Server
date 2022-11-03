@@ -50,6 +50,14 @@ async function createTeam(req, res) {
         const createdReflection = await reflection.create({
             team_id: createdTeam.id
         });
+        // 현재 팀의 current_reflection_id 업데이트
+        const updatedTeam = await team.update({
+            current_reflection_id: createdReflection.id
+        }, {
+            where : {
+                id: createdTeam.id
+            }
+        });
         // 유저의 팀 합류 및 리더 설정
         const createdUserTeam = await userteam.create({
             user_id: req.header('user_id'),
