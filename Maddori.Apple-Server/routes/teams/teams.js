@@ -4,7 +4,7 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // reference : https://www.programiz.com/javascript/examples/generate-random-strings
 function generateCode() {
     let generatedCode = '';
-    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ";
     const codeLen = 6;
     for (let i=0; i<codeLen; i++) {
         generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
