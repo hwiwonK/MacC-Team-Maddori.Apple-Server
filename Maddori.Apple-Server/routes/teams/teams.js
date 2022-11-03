@@ -103,6 +103,9 @@ async function getTeamInformation(req, res, next) {
     }
 }
 
+// request data : user_id, team_id
+// response data : [user_id, username]
+// 팀에 속한 유저(멤버) 목록 가져오기
 async function getTeamMembers(req, res, next) {
     console.log("팀 멤버 목록 가져오기");
 
@@ -122,7 +125,6 @@ async function getTeamMembers(req, res, next) {
             raw : true
         });
         teamMemberList.map((data) => (delete data['user.username']));
-        console.log(teamMemberList);
         const teamMemberInformation = {
             members : teamMemberList
         }
