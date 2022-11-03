@@ -103,7 +103,39 @@ async function getTeamInformation(req, res, next) {
     }
 }
 
+async function getTeamMembers(req, res, next) {
+    console.log("팀 멤버 목록 가져오기");
+
+    try {
+        // TODO : 불필요한 필드 제거 (user.username)
+        // 멤버 목록 가져오기
+        const teamMemberList = await userteam.findAll({
+            attributes : ['user_id', 'user.username'],
+            where : {
+                team_id: req.params.team_id
+            },
+            include : { 
+                model: user,
+                attributes: ['username'],
+                required: true 
+            },
+            raw : true
+        });
+        teamMemberList.map((data) => (delete data['user.username']));
+        console.log(teamMemberList);
+        const teamMemberInformation = {
+            members : teamMemberList
+        }
+        res.status(200).json(teamMemberInformation);
+
+    } catch(error) {
+        // TODO: 에러 처리 수정
+        res.status(500).send(error);
+    }
+}
+
 module.exports = {
     createTeam,
-    getTeamInformation
+    getTeamInformation,
+    getTeamMembers
 };
