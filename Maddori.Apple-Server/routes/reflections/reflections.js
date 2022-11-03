@@ -3,7 +3,7 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // request data : user_id, team_id
 // response data : current_reflection_id, reflection_name, date, status, 회고에 속한 keywords 목록
 // 팀에서 진행하는 현재의 회고 정보 가져오기
-async function getRelfectionInformation(req, res, next) {
+async function getReflectionInformation(req, res, next) {
     console.log("현재 회고 정보 가져오기");
 
     try {
@@ -40,5 +40,5 @@ async function getRelfectionInformation(req, res, next) {
 }
 
 module.exports = {
-    getRelfectionInformation
+    getReflectionInformation
 };
