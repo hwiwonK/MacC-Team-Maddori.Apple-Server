@@ -49,7 +49,7 @@ module.exports = function(sequelize, DataTypes){
             reflection_name: {
                 field: "reflection_name",
                 type: DataTypes.STRING(15),
-                allowNull: false
+                allowNull: true
             },
             date: {
                 field: "date",
