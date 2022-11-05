@@ -14,7 +14,7 @@ async function userLogin(req, res, next) {
         res.status(201).send(createdUser);
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 
@@ -47,7 +47,7 @@ async function userJoinTeam(req, res, next) {
         // TODO: response 과정 에러 처리 추가
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 
@@ -73,7 +73,7 @@ async function userLeaveTeam(req, res, next) {
         }
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 
