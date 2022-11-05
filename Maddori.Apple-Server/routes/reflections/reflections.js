@@ -35,7 +35,7 @@ async function getReflectionInformation(req, res, next) {
 
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 

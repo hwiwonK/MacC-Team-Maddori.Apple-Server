@@ -67,7 +67,7 @@ async function createTeam(req, res) {
         res.status(201).json(createdTeam);
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(500).json(error);
+        res.status(400).json(error);
     }
 }
 
@@ -99,7 +99,7 @@ async function getTeamInformation(req, res, next) {
 
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 
@@ -132,7 +132,7 @@ async function getTeamMembers(req, res, next) {
 
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 }
 
