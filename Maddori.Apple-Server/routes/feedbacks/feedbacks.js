@@ -24,7 +24,7 @@ async function createFeedback(req, res, next) {
         res.status(201).json(createdFeedback);
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(500).json(error);
+        res.status(400).json(error);
     }
 }
 
