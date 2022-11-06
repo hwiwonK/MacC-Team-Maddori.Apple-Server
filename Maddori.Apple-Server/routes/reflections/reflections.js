@@ -12,7 +12,7 @@ async function getReflectionInformation(req, res, next) {
             attributes: ['current_reflection_id'],
             raw : true
         });
-        // 팀의 현재 회고의 reflection_name, date, status
+        // 팀의 현재 회고의 reflection_name,date, status
         const reflectionInformation = await reflection.findByPk(currentReflectionId.current_reflection_id);
         // 팀의 현재 회고에 속한 keywords
         const keywordsList = await feedback.findAll({
@@ -39,6 +39,27 @@ async function getReflectionInformation(req, res, next) {
     }
 }
 
+
+//* 진행했던 회고목록 조회
+//* request data: team_id
+//* response data: id, reflection_name, date, state, team_id
+const getPastReflectionList = async (req, res) => {
+    const { team_id } = req.params;
+
+    try {
+        const reflectionData = await reflection.findAll({
+            where:{
+                team_id 
+            }
+        })
+        return res.status(200).json({"success":true,"message":"data 조회 성공","detail":reflectionData})
+    } catch (error) {
+        return res.status(400).json()
+    }
+
+}
+
 module.exports = {
-    getReflectionInformation
+    getReflectionInformation,
+    getPastReflectionList
 };
