@@ -64,12 +64,6 @@ module.exports = function(sequelize, DataTypes){
                 type: DataTypes.STRING(200),
                 allowNull: true
             },
-            is_favorite: {
-                field: "is_favorite",
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: false
-            },
             start_content: {
                 field: "start_content",
                 type: DataTypes.STRING(200),
