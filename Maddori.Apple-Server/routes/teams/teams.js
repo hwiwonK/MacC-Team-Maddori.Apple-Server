@@ -29,7 +29,7 @@ function checkDuplicateCode(createdTeamCode) {
 // request data : user_id, team_name
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
-async function createTeam(req, res) {
+async function createTeam(req, res, next) {
     console.log("팀 생성하기");
     const teamContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
@@ -46,10 +46,12 @@ async function createTeam(req, res) {
             team_name: teamContent.team_name,
             invitation_code: createdTeamCode
         });
+
         // 팀 생성 후 첫 번째 회고 생성
         const createdReflection = await reflection.create({
             team_id: createdTeam.id
         });
+
         // 현재 팀의 current_reflection_id 업데이트
         const updatedTeam = await team.update({
             current_reflection_id: createdReflection.id
@@ -58,23 +60,33 @@ async function createTeam(req, res) {
                 id: createdTeam.id
             }
         });
+
         // 유저의 팀 합류 및 리더 설정
         const createdUserTeam = await userteam.create({
             user_id: req.header('user_id'),
             team_id: createdTeam.id,
             admin: true
         });
-        res.status(201).json(createdTeam);
+        
+        res.status(201).json({
+            success: true,
+            message: '팀 생성 완료, 유저를 해당 팀의 리더로 설정',
+            detail: createdTeam
+        });
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json(error);
+        res.status(400).json({
+            success: false,
+            message: '팀 생성 실패',
+            detail: error.message
+        });
     }
 }
 
 // request data : user_id, team_id
 // response data : team_id, team_name, invitation_code, admin
 // 팀의 정보 가져오기
-async function getTeamInformation(req, res, next) {
+async function getCertainTeamInformation(req, res, next) {
     console.log("팀의 정보 가져오기");
 
     try {
@@ -88,6 +100,7 @@ async function getTeamInformation(req, res, next) {
             },
             raw : true
         });
+
         // 위 데이터 중 필요한 부분을 합친 response 데이터 만들기
         const teamFinalInformation = {
             team_id : req.params.team_id,
@@ -95,11 +108,20 @@ async function getTeamInformation(req, res, next) {
             invitation_code : teamBasicInformation.invitation_code,
             admin : teamLeader.admin
         }
-        res.status(200).json(teamFinalInformation);
+
+        res.status(200).json({
+            success: true,
+            message: '유저가 속한 팀의 정보 가져오기 성공',
+            detail: teamFinalInformation
+        });
 
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            message: '유저가 속한 팀의 정보 가져오기 실패',
+            detail: error.message
+        });
     }
 }
 
@@ -124,20 +146,31 @@ async function getTeamMembers(req, res, next) {
             },
             raw : true
         });
+        if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
+
         teamMemberList.map((data) => (delete data['user.username']));
         const teamMemberInformation = {
             members : teamMemberList
         }
-        res.status(200).json(teamMemberInformation);
+
+        res.status(200).json({
+            success: true,
+            message: '팀의 멤버 목록 가져오기 성공',
+            detail: teamMemberInformation
+        });
 
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            message: '팀의 멤버 목록 가져오기 실패',
+            detail: error.message
+        });
     }
 }
 
 module.exports = {
     createTeam,
-    getTeamInformation,
+    getCertainTeamInformation,
     getTeamMembers
 };
