@@ -33,12 +33,12 @@ async function createFeedback(req, res, next) {
 //team_id, reflection_id,reflection_name, 보내는 user_name
 // 특정 type을 만족하는 feedback을 불러온다.
 // 만약 reflection_id 가 recent인 경우에는 가장 최근 회고에서 feedback을 불러온다.
-const getCertainTypeFeedbackAll = async (req, res) => {
+const getCertainTypeFeedbackAll = async (req, res, next) => {
     try {
         const { type } = req.query;
         const { team_id, reflection_id } = req.params;
 
-        if (reflection_id == "recent") {
+        if (reflection_id == 'recent') {
             const teamData = await team.findByPk(team_id)
             const recentReflectionId = teamData.recent_reflection_id;
             const feedbackData = await feedback.findAll({
@@ -57,10 +57,10 @@ const getCertainTypeFeedbackAll = async (req, res) => {
                 ]
             })  
             return res.status(200).json({
-                'success':true,
-                'message':'최근 회고 피드백 조회 성공',
+                'success': true,
+                'message': '최근 회고 피드백 조회 성공',
                 'detail': {
-                    "feedback": [feedbackData]
+                    'feedback': [feedbackData]
                 }
             });         
         }
@@ -80,22 +80,23 @@ const getCertainTypeFeedbackAll = async (req, res) => {
             ]
         })
         return res.status(200).json({
-            'success':true,
-            'message':'피드백 정보 조회 성공',
+            'success': true,
+            'message': '피드백 정보 조회 성공',
             'detail': {
-                "feedback": [feedbackData]
+                'feedback': [feedbackData]
             }
         });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
-            'success':false,
-            'message':'피드백 정보 조회 실패'
+            'success': false,
+            'message': '피드백 정보 조회 실패',
+            'detail': error.message
         })
     }
 }
 
 module.exports = {
     createFeedback,
-    getCertainTypeFeedbackAll,
+    getCertainTypeFeedbackAll
 };
