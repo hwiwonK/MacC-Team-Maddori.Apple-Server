@@ -11,10 +11,18 @@ async function userLogin(req, res, next) {
 
     try {
         const createdUser = await user.create(userContent);
-        res.status(201).send(createdUser);
+        res.status(201).json({
+            success: true,
+            message: '유저 로그인 성공',
+            datail: createdUser
+        });
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            message: '유저 로그인 실패',
+            detail: error.message
+        });
     }
 }
 
@@ -43,11 +51,19 @@ async function userJoinTeam(req, res, next) {
             user_id: req.header('user_id'),
             team_id: requestTeam.id
         });
-        res.status(201).send(createdUserteam);
+        res.status(201).json({
+            success: true,
+            message: '유저 팀 합류 성공',
+            detail: createdUserteam
+        });
         // TODO: response 과정 에러 처리 추가
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            message: '유저 팀 합류 실패',
+            detail: error.message
+        });
     }
 }
 
@@ -67,13 +83,24 @@ async function userLeaveTeam(req, res, next) {
         // TODO: 삭제가 제대로 수행 안됐을 경우 에러 처리 추가
         // TODO: 삭제할 데이터가 없을 경우 에러 처리 추가
         if (deletedUserTeam == 1) { // 삭제할 데이터 있음
-            res.status(200).send("success");
+            res.status(200).json({
+                success: true,
+                message: '유저 팀 탈퇴 성공'
+            });
         } else { // 삭제할 데이터 없음
-            res.status(202).send("no such data");
+            res.status(400).json({
+                success: false,
+                message: '유저 팀 탈퇴 실패',
+                detail: '유저와 팀 정보가 잘못됨'
+            });
         }
     } catch(error) {
         // TODO: 에러 처리 수정
-        res.status(400).send(error);
+        res.status(400).json({
+            success: false,
+            message: '유저 팀 탈퇴 실패',
+            detail: error.message
+        });
     }
 }
 
