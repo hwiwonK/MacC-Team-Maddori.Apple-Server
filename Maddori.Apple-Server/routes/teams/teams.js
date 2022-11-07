@@ -4,9 +4,9 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // reference : https://www.programiz.com/javascript/examples/generate-random-strings
 function generateCode() {
     let generatedCode = '';
-    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ";
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ';
     const codeLen = 6;
-    for (let i=0; i<codeLen; i++) {
+    for (let i = 0; i < codeLen; i++) {
         generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return generatedCode;
@@ -15,7 +15,7 @@ function generateCode() {
 // 팀 invitation_code 중복 여부 체크
 function checkDuplicateCode(createdTeamCode) {
     const duplicateCode = team.findOne({
-        where : {
+        where: {
             invitation_code: createdTeamCode
         }
     });
@@ -39,7 +39,7 @@ async function createTeam(req, res, next) {
         let createdTeamCode;
         do {
             createdTeamCode = generateCode();
-        } while (checkDuplicateCode(createdTeamCode))
+        } while (checkDuplicateCode(createdTeamCode));
 
         // 팀 생성
         const createdTeam = await team.create({
@@ -56,7 +56,7 @@ async function createTeam(req, res, next) {
         const updatedTeam = await team.update({
             current_reflection_id: createdReflection.id
         }, {
-            where : {
+            where: {
                 id: createdTeam.id
             }
         });
@@ -73,6 +73,7 @@ async function createTeam(req, res, next) {
             message: '팀 생성 완료, 유저를 해당 팀의 리더로 설정',
             detail: createdTeam
         });
+
     } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
@@ -94,19 +95,19 @@ async function getCertainTeamDetail(req, res, next) {
         const teamBasicInformation = await team.findByPk(req.params.team_id);
         // 유저가 팀의 리더인지 확인
         const teamLeader = await userteam.findOne({
-            where : {
-                user_id : req.header('user_id'),
-                team_id : req.params.team_id
+            where: {
+                user_id: req.header('user_id'),
+                team_id: req.params.team_id
             },
-            raw : true
+            raw: true
         });
 
         // 위 데이터 중 필요한 부분을 합친 response 데이터 만들기
         const teamFinalInformation = {
-            team_id : req.params.team_id,
-            team_name : teamBasicInformation.team_name,
-            invitation_code : teamBasicInformation.invitation_code,
-            admin : teamLeader.admin
+            team_id: req.params.team_id,
+            team_name: teamBasicInformation.team_name,
+            invitation_code: teamBasicInformation.invitation_code,
+            admin: teamLeader.admin
         }
 
         res.status(200).json({
@@ -115,7 +116,7 @@ async function getCertainTeamDetail(req, res, next) {
             detail: teamFinalInformation
         });
 
-    } catch(error) {
+    } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
             success: false,
@@ -135,22 +136,22 @@ async function getTeamMembers(req, res, next) {
         // TODO : 불필요한 필드 제거 (user.username)
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({
-            attributes : ['user_id', 'user.username'],
-            where : {
+            attributes: ['user_id', 'user.username'],
+            where: {
                 team_id: req.params.team_id
             },
-            include : { 
+            include: { 
                 model: user,
                 attributes: ['username'],
                 required: true 
             },
-            raw : true
+            raw: true
         });
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
         teamMemberList.map((data) => (delete data['user.username']));
         const teamMemberInformation = {
-            members : teamMemberList
+            members: teamMemberList
         }
 
         res.status(200).json({
@@ -159,7 +160,7 @@ async function getTeamMembers(req, res, next) {
             detail: teamMemberInformation
         });
 
-    } catch(error) {
+    } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
             success: false,

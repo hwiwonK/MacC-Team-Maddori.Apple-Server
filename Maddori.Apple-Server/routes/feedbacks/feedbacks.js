@@ -21,12 +21,13 @@ async function createFeedback(req, res, next) {
             team_id: req.params.team_id,
             reflection_id: req.params.reflection_id
         });
+
         res.status(201).json({
             success: true,
             message: '피드백 생성하기 성공',
             detail: createdFeedback
         });
-    } catch(error) {
+    } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
             success: false,
