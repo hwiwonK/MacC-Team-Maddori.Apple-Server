@@ -46,7 +46,15 @@ const getCertainTypeFeedbackAll = async (req, res) => {
                     team_id: team_id,
                     reflection_id: recentReflectionId,
                     type: type
-                }
+                },
+                include: [
+                    {
+                        model: reflection, where: { id: recentReflectionId }
+                    },
+                    {
+                        model: user
+                    }
+                ]
             })  
             return res.status(200).json({'success':true, 'message':'최근 회고 피드백 조회 성공','detail':feedbackData});         
         }
