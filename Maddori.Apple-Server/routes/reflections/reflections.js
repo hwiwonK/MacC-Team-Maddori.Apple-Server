@@ -52,7 +52,11 @@ const getPastReflectionList = async (req, res) => {
                 team_id 
             }
         })
-        return res.status(200).json({"success":true,"message":"data 조회 성공","detail":reflectionData})
+        return res.status(200).json({
+            "success":true,
+            "message":"data 조회 성공",
+            "detail": [reflectionData]
+        })
     } catch (error) {
         return res.status(400).json()
     }
