@@ -29,7 +29,8 @@ async function createFeedback(req, res, next) {
 }
 
 // request data: team_id, reflection_id, type
-// response data: id, type, keyword, content, start_content, from_id, to_id, team_id, reflection_id
+// response data: id, type, keyword, content, start_content, from_id, to_id, 
+//team_id, reflection_id,reflection_name, 보내는 user_name
 // 특정 type을 만족하는 feedback을 불러온다.
 // 만약 reflection_id 가 recent인 경우에는 가장 최근 회고에서 feedback을 불러온다.
 const getCertainTypeFeedbackAll = async (req, res) => {

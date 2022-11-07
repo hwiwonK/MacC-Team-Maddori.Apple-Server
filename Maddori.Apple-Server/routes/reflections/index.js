@@ -6,7 +6,7 @@ const {
 } = require('./reflections');
 
 router.get('/current', getReflectionInformation);
-router.get("/", getPastReflectionList);
+router.get('/', getPastReflectionList);
 
 
 module.exports = router;
