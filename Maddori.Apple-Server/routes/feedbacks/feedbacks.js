@@ -56,19 +56,42 @@ const getCertainTypeFeedbackAll = async (req, res) => {
                     }
                 ]
             })  
-            return res.status(200).json({'success':true, 'message':'최근 회고 피드백 조회 성공','detail':feedbackData});         
+            return res.status(200).json({
+                'success':true,
+                'message':'최근 회고 피드백 조회 성공',
+                'detail': {
+                    "feedback": [feedbackData]
+                }
+            });         
         }
         const feedbackData = await feedback.findAll({
             where: {
                 team_id: team_id,
                 reflection_id: reflection_id,
                 type: type
-            }
+            },
+            include: [
+                {
+                    model: reflection, where: { id: recentReflectionId }
+                },
+                {
+                    model: user
+                }
+            ]
         })
-        return res.status(200).json({'success':true, 'message':'피드백 조회 성공','detail':feedbackData});
+        return res.status(200).json({
+            'success':true,
+            'message':'피드백 정보 조회 성공',
+            'detail': {
+                "feedback": [feedbackData]
+            }
+        });
     } catch (error) {
         console.log(error);
-        return res.status(400).json({"success":false, "message":"조회 실패"})
+        return res.status(400).json({
+            'success':false,
+            'message':'피드백 정보 조회 실패'
+        })
     }
 }
 
