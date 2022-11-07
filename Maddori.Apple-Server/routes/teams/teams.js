@@ -86,7 +86,7 @@ async function createTeam(req, res, next) {
 // request data : user_id, team_id
 // response data : team_id, team_name, invitation_code, admin
 // 팀의 정보 가져오기
-async function getCertainTeamInformation(req, res, next) {
+async function getCertainTeamDetail(req, res, next) {
     console.log("팀의 정보 가져오기");
 
     try {
@@ -171,6 +171,6 @@ async function getTeamMembers(req, res, next) {
 
 module.exports = {
     createTeam,
-    getCertainTeamInformation,
+    getCertainTeamDetail,
     getTeamMembers
 };
