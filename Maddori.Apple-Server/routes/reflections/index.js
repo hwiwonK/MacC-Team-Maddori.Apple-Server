@@ -1,9 +1,9 @@
 const express = require('express');
 const router = new express.Router({ mergeParams: true });
 const {
-    getReflectionInformation
+    getCurrentReflectionDetail
 } = require('./reflections');
 
-router.get('/current', getReflectionInformation);
+router.get('/current', getCurrentReflectionDetail);
 
 module.exports = router;
