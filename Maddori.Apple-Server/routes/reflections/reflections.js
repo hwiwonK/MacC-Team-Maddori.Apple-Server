@@ -51,6 +51,37 @@ async function getCurrentReflectionDetail(req, res, next) {
     }
 }
 
+
+//* 진행했던 회고목록 조회
+//* request data: team_id
+//* response data: id, reflection_name, date, state, team_id
+const getPastReflectionList = async (req, res, next) => {
+    const { team_id } = req.params;
+
+    try {
+        const reflectionData = await reflection.findAll({
+            where: {
+                team_id 
+            }
+        });
+        return res.status(200).json({
+            "success": true,
+            "message": "data 조회 성공",
+            "detail": {
+                "reflection": [reflectionData]
+            }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "회고목록 조회 실패",
+            detail: error.message
+        });
+    }
+}
+
+
 module.exports = {
-    getCurrentReflectionDetail
+    getCurrentReflectionDetail,
+    getPastReflectionList
 };
