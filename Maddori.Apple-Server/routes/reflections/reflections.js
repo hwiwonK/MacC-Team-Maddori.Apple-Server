@@ -53,14 +53,14 @@ async function getCurrentReflectionDetail(req, res, next) {
 // request data : user_id, team_id, reflection_id
 // response data : reflection_id, reflection_name, date, status
 // 팀의 리더가 팀의 현재 회고에 디테일 정보(이름, 일시)를 추가한다.
-async function updateReflectionDetail(req, res, next) {
-    console.log('회고 정보 추가하기');
-    const { team_id, reflection_id } = req.params;
-    const { reflection_name, reflection_date } = req.body;
+const updateReflectionDetail = async (req, res, next) => {
     // TODO: 유저가 현재 팀의 리더인지 검증(미들웨어)
     // TODO: 회고의 status가 회고 정보를 추가할 수 있는 상태인지 검증(미들웨어)
-
     try {
+        console.log('회고 정보 추가하기');
+        const { reflection_id } = req.params;
+        const { reflection_name, reflection_date } = req.body;
+
         // 피드백 상세 정보 추가
         const updateReflectionSuccess = await reflection.update({
             reflection_name: reflection_name,
