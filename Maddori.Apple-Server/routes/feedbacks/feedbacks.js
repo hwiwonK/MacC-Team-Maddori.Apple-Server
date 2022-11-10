@@ -174,11 +174,8 @@ const deleteFeedback = async (req, res, next) => {
             'detail': error.message
         })
     }
-    
-
-
 }
-
+ 
 module.exports = {
     createFeedback,
     getCertainTypeFeedbackAll,
