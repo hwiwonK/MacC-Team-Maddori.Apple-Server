@@ -5,14 +5,14 @@ const {
     getCertainTeamDetail,
     getTeamMembers
 } = require('./teams');
-const {
-    userTeamCheck
-} = require('../../middlewares/auth');
+// const {
+//     userTeamCheck
+// } = require('../../middlewares/auth');
 
-// middleware
-router.use('/:team_id', userTeamCheck);
+// // middleware
+// router.use('/:team_id', userTeamCheck);
 
-// functions
+// function
 router.post('/', createTeam);
 router.get('/:team_id', getCertainTeamDetail);
 router.get('/:team_id/members', getTeamMembers);
