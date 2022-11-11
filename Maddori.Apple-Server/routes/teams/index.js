@@ -5,12 +5,6 @@ const {
     getCertainTeamDetail,
     getTeamMembers
 } = require('./teams');
-// const {
-//     userTeamCheck
-// } = require('../../middlewares/auth');
-
-// // middleware
-// router.use('/:team_id', userTeamCheck);
 
 // function
 router.post('/', createTeam);
