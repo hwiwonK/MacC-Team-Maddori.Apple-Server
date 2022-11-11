@@ -1,4 +1,3 @@
-const { where } = require('sequelize');
 const {user, team, userteam, reflection, feedback} = require('../../models');
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
