@@ -121,10 +121,11 @@ const updateFeedback = async (req, res, next) => {
               content: content,
               start_content: start_content
             },
-            { where: {
-                id: feedback_id
-            }
-        })
+            { 
+                where: {
+                    id: feedback_id
+                }
+            });
 
         const resultFeedbackData = await feedback.findByPk(feedback_id,
             {
@@ -132,7 +133,7 @@ const updateFeedback = async (req, res, next) => {
                         model: reflection,
                     },
                     {
-                    model: user
+                        model: user
                     }]
             });
 
