@@ -124,30 +124,41 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             attributes: ['current_reflection_id'],
             raw: true
         });
-        console.log(currentReflectionId);
+
+        // 피드백을 받는 멤버의 정보 가져오기 (받는 멤버의 정보가 없을 경우 에러 처리)
+        const membersDetail = await user.findByPk(members);
+        if (membersDetail === null) throw Error('받는 멤버의 정보를 찾을 수 없음');
 
         // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
         const feedbacksToCertainMember = await feedback.findAll({
-            attributes: ['to_id', 'user.username', 'type', 'content', 'start_content'],
+            attributes: ['type', 'keyword', 'content', 'start_content'],
             where: {
                 reflection_id: currentReflectionId.current_reflection_id,
                 from_id: user_id,
                 to_id: members
             },
-            include: {
-                model: user,
-                attributes: [['id', 'to_id'], 'username']
-            },
-            order: ['type'],
             raw: true
         });
-        console.log(feedbacksToCertainMember);
         
-        // 유저가 탈퇴했을 경우 username은 null로
+        // type 기준으로 그룹화하여 묶기
+        const feedbacksToCertainMemberGroupByType = {
+            'reflection_id': currentReflectionId.currentReflectionId,
+            'from_id': user_id,
+            'to_id': members,
+            'to_username': membersDetail.username,
+            'Continue': [],
+            'Stop': []
+        }
+        feedbacksToCertainMember.map((data) => {
+            const { type, ...contents } = data;
+            console.log(contents);
+            feedbacksToCertainMemberGroupByType[type].push(contents);
+        });
+
         res.status(200).json({
             success: true,
             message: '특정 멤버에게 작성한 피드백 목록 가져오기 성공',
-            detail: feedbacksToCertainMember
+            detail: feedbacksToCertainMemberGroupByType
         });
 
     } catch (error) {
@@ -158,8 +169,6 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             detail: error.message
         });
     }
-
-
 }
 
 module.exports = {
