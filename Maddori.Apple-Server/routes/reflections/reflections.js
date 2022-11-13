@@ -1,3 +1,4 @@
+const { equal } = require('assert');
 const {user, team, userteam, reflection, feedback} = require('../../models');
 
 // request data : user_id, team_id
@@ -80,8 +81,40 @@ const getPastReflectionList = async (req, res, next) => {
     }
 }
 
+const endInProgressReflection = async (req, res, next) => {
+    try {
+        const { reflection_id } = req.params;
+
+        await reflection.update(
+            {
+                state: "Done"
+            },
+            {
+                where:{
+                    id: reflection_id
+                    }
+            })
+        const data = await reflection.findByPk(reflection_id);
+
+        return res.status(200).json({
+            success: true,
+            message: "회고 종료 성공",
+            data: {
+                reflection: data
+            }
+        })
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "회고 종료 실패"
+        })
+    }
+    
+}
+
 
 module.exports = {
     getCurrentReflectionDetail,
-    getPastReflectionList
+    getPastReflectionList,
+    endInProgressReflection
 };
