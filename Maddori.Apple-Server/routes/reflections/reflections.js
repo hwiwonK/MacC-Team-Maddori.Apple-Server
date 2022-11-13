@@ -81,9 +81,12 @@ const getPastReflectionList = async (req, res, next) => {
     }
 }
 
+//* request data: reflection_id, team_id
+//* response data: id, reflection_name, date, state, team_id
+//* 특정 회고를 종료하는 API
 const endInProgressReflection = async (req, res, next) => {
     try {
-        const { reflection_id } = req.params;
+        const { reflection_id, team_id } = req.params;
 
         await reflection.update(
             {
@@ -91,7 +94,8 @@ const endInProgressReflection = async (req, res, next) => {
             },
             {
                 where:{
-                    id: reflection_id
+                    id: reflection_id,
+                    team_id: team_id
                     }
             })
         const data = await reflection.findByPk(reflection_id);
