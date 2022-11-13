@@ -6,11 +6,12 @@ const {
     getPastReflectionList
 } = require('./reflections');
 const {
+    userTeamCheck,
     userAdminCheck
 } = require('../../middlewares/auth');
 
-router.get('/', getPastReflectionList);
-router.get('/current', getCurrentReflectionDetail);
-router.patch('/:reflection_id', [userAdminCheck], updateReflectionDetail);
+router.get('/', [userTeamCheck], getPastReflectionList);
+router.get('/current', [userTeamCheck], getCurrentReflectionDetail);
+router.patch('/:reflection_id', [userTeamCheck, userAdminCheck], updateReflectionDetail);
 
 module.exports = router;

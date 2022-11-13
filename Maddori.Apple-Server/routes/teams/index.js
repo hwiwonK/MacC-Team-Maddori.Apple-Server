@@ -5,10 +5,13 @@ const {
     getCertainTeamDetail,
     getTeamMembers
 } = require('./teams');
+const {
+    userTeamCheck,
+    userAdminCheck
+} = require('../../middlewares/auth');
 
-// function
 router.post('/', createTeam);
-router.get('/:team_id', getCertainTeamDetail);
-router.get('/:team_id/members', getTeamMembers);
+router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
+router.get('/:team_id/members', [userTeamCheck], getTeamMembers);
 
 module.exports = router;
