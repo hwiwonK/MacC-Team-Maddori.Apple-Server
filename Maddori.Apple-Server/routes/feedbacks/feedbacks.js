@@ -1,4 +1,5 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
+var sequelize = require('sequelize');
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite, start_content)
@@ -105,7 +106,64 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
     }
 }
 
+// request data :  user_id, team_id, 피드백을 받는 유저의 user_id
+/* response data : user_id, team_id, reflection_id, 피드백을 받는 유저의 user_id, username, 
+    피드백 type 별 feedback detail(keyword, content, start_content) */
+// 팀의 현재 회고에 담긴 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
+const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
+    console.log('특정 멤버에게 작성한 피드백 리스트 가져오기');
+
+    try {
+        const { reflection_id, team_id } = req.params;
+        const { members } = req.query;
+        const user_id = req.header('user_id');
+
+        // 팀이 진행 중인 현재 회고 id 가져오기
+        if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
+        const currentReflectionId = await team.findByPk(team_id, {
+            attributes: ['current_reflection_id'],
+            raw: true
+        });
+        console.log(currentReflectionId);
+
+        // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
+        const feedbacksToCertainMember = await feedback.findAll({
+            attributes: ['to_id', 'user.username', 'type', 'content', 'start_content'],
+            where: {
+                reflection_id: currentReflectionId.current_reflection_id,
+                from_id: user_id,
+                to_id: members
+            },
+            include: {
+                model: user,
+                attributes: [['id', 'to_id'], 'username']
+            },
+            order: ['type'],
+            raw: true
+        });
+        console.log(feedbacksToCertainMember);
+        
+        // 유저가 탈퇴했을 경우 username은 null로
+        res.status(200).json({
+            success: true,
+            message: '특정 멤버에게 작성한 피드백 목록 가져오기 성공',
+            detail: feedbacksToCertainMember
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '특정 멤버에게 작성한 피드백 목록 가져오기 실패',
+            detail: error.message
+        });
+    }
+
+
+}
+
 module.exports = {
     createFeedback,
-    getCertainTypeFeedbackAll
+    getCertainTypeFeedbackAll,
+    getFromMeToCertainMemberFeedbackAll
 };
