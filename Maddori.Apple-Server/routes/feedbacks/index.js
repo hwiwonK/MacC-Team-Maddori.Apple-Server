@@ -13,5 +13,5 @@ router.post('/', createFeedback);
 router.get('/', getCertainTypeFeedbackAll);
 router.put('/:feedback_id', updateFeedback);
 router.delete("/:feedback_id", deleteFeedback);
-router.get("/from_team", getTeamAndUserFeedback); 
+router.get("/from-team", getTeamAndUserFeedback); 
 module.exports = router;
