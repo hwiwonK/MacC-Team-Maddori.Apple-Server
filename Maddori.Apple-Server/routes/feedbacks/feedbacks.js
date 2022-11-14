@@ -213,11 +213,12 @@ const getTeamAndUserFeedback = async (req, res) => {
         }
     })
 
+    let category = "self";
+    
     if (user_id !== member_id) { 
-        const category = "others";
+       category = "others";
     }
-    const category = "self";
-
+    
     return res.status(200).json({
         success: true,
         message: "피드백 조회 성공",
