@@ -118,10 +118,18 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 
         // 팀이 진행 중인 현재 회고 id 가져오기
         if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
-        const currentReflectionId = await team.findByPk(team_id, {
-            attributes: ['current_reflection_id'],
+        const currentReflection = await team.findByPk(team_id, {
+            attributes: ['current_reflection_id', 'reflection.reflection_name', 'reflection.state'],
+            include: {
+                model: reflection,
+                as: 'reflection',
+            },
+            where: {
+                current_reflection_id: reflection.id
+            },
             raw: true
         });
+        console.log(currentReflection);
 
         // 피드백을 받는 멤버의 정보 가져오기 (받는 멤버의 정보가 없을 경우 에러 처리)
         const membersDetail = await user.findByPk(members);
@@ -131,7 +139,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         const feedbacksToCertainMember = await feedback.findAll({
             attributes: ['type', 'keyword', 'content', 'start_content'],
             where: {
-                reflection_id: currentReflectionId.current_reflection_id,
+                reflection_id: currentReflection.current_reflection_id,
                 from_id: user_id,
                 to_id: members
             },
@@ -141,7 +149,9 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         // type 기준으로 그룹화하여 묶기
         const feedbacksToCertainMemberGroupByType = {
             'team_id': team_id,
-            'reflection_id': currentReflectionId.current_reflection_id,
+            'reflection_id': currentReflection.current_reflection_id,
+            'reflection_name' : currentReflection.reflection_name,
+            'reflection_status' : currentReflection.state,
             'from_id': user_id,
             'to_id': members,
             'to_username': membersDetail.username,
