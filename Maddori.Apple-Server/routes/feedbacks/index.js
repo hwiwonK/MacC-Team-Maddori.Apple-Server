@@ -5,7 +5,9 @@ const {
     getCertainTypeFeedbackAll,
     getFromMeToCertainMemberFeedbackAll,
     updateFeedback,
-    deleteFeedback
+    deleteFeedback,
+    getTeamAndUserFeedback
+
 } = require('./feedbacks');
 const {
     userTeamCheck,
@@ -16,6 +18,7 @@ router.post('/', [userTeamCheck], createFeedback);
 router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
 router.put('/:feedback_id', updateFeedback);
 router.delete("/:feedback_id", deleteFeedback);
+router.get("/from-team", getTeamAndUserFeedback); 
 router.get('/from-me', getFromMeToCertainMemberFeedbackAll);
 
 module.exports = router;
