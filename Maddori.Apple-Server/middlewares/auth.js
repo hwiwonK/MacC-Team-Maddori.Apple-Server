@@ -51,7 +51,35 @@ const userAdminCheck = async (req, res, next) => {
     }
 }
 
+const reflectionStateCheck = (requiredState) => {
+    return async (req, res, next) => {
+        try {
+            console.log('회고의 상태 검증');
+            const { team_id, reflection_id } = req.params;
+            const reflectionState = await reflection.findOne({
+                attributes: ['state'],
+                where: {
+                    id: reflection_id,
+                    team_id: team_id
+                },
+                raw: true
+            });
+            console.log(reflectionState);
+            if (reflectionState.state !== requiredState) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+            next();
+
+        } catch (error) {
+            res.status(400).json({
+                success: false,
+                message: '요청 권한 없음',
+                detail: error.message
+            });
+        }
+    }
+}
+
 module.exports = {
     userTeamCheck,
-    userAdminCheck
+    userAdminCheck,
+    reflectionStateCheck
 }

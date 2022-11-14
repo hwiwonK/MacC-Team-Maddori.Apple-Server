@@ -7,11 +7,12 @@ const {
 } = require('./reflections');
 const {
     userTeamCheck,
-    userAdminCheck
+    userAdminCheck,
+    reflectionStateCheck
 } = require('../../middlewares/auth');
 
 router.get('/', [userTeamCheck], getPastReflectionList);
 router.get('/current', [userTeamCheck], getCurrentReflectionDetail);
-router.patch('/:reflection_id', [userTeamCheck, userAdminCheck], updateReflectionDetail);
+router.patch('/:reflection_id', [userTeamCheck, userAdminCheck, reflectionStateCheck('SettingRequired')], updateReflectionDetail);
 
 module.exports = router;
