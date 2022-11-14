@@ -103,7 +103,7 @@ const reflectionStateCheck = (requiredState) => {
                 },
                 raw: true
             });
-            if (reflectionState.state !== requiredState) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+            if (reflectionState.state !== requiredState && reflectionState.state != 'SettingRequired') throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
             next();
 
         } catch (error) {
