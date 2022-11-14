@@ -20,7 +20,7 @@ function checkDuplicateCode(createdTeamCode) {
         }
     });
     if (duplicateCode == null) {
-        console.log("Code duplicate");
+        // console.log("Code duplicate");
         return true;
     }
     return false;
@@ -30,7 +30,7 @@ function checkDuplicateCode(createdTeamCode) {
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
-    console.log("팀 생성하기");
+    // console.log("팀 생성하기");
     const teamContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
@@ -88,7 +88,7 @@ async function createTeam(req, res, next) {
 // response data : team_id, team_name, invitation_code, admin
 // 팀의 정보 가져오기
 async function getCertainTeamDetail(req, res, next) {
-    console.log("팀의 정보 가져오기");
+    // console.log("팀의 정보 가져오기");
 
     try {
         // 팀의 team_name, invitation_code
@@ -130,7 +130,7 @@ async function getCertainTeamDetail(req, res, next) {
 // response data : [user_id, username]
 // 팀에 속한 유저(멤버) 목록 가져오기
 async function getTeamMembers(req, res, next) {
-    console.log("팀 멤버 목록 가져오기");
+    // console.log("팀 멤버 목록 가져오기");
 
     try {
         // TODO : 불필요한 필드 제거 (user.username)

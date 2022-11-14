@@ -10,11 +10,11 @@ app.use(express.json());
 // database 연결
 sequelize.sync({ force: false })
 .then(() => {
-    console.log('데이터베이스 연결 성공');
+    // console.log('데이터베이스 연결 성공');
 })
 .catch((err) => {
-    console.log('데이터베이스 연결 실패');
-    console.error(err);
+    // console.log('데이터베이스 연결 실패');
+    // console.error(err);
 });
 
 app.get('/', (req, res) => {
@@ -22,9 +22,9 @@ app.get('/', (req, res) => {
 });
 
 // 라우팅 (users, teams, reflections, feedbacks 로 분리)
-app.use('/users', require('./routes/users/index'));
-app.use('/teams', require('./routes/teams/index'));
-app.use('/teams/:team_id/reflections', require('./routes/reflections/index'));
-app.use('/teams/:team_id/reflections/:reflection_id/feedbacks', require('./routes/feedbacks/index'));
+app.use('api/v1/users', require('./routes/users/index'));
+app.use('api/v1/teams', require('./routes/teams/index'));
+app.use('api/v1/teams/:team_id/reflections', require('./routes/reflections/index'));
+app.use('api/v1/teams/:team_id/reflections/:reflection_id/feedbacks', require('./routes/feedbacks/index'));
 
 module.exports = app

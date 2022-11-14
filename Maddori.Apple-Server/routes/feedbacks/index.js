@@ -11,14 +11,16 @@ const {
 } = require('./feedbacks');
 const {
     userTeamCheck,
-    userAdminCheck
+    userAdminCheck,
+    reflectionTimeCheck,
+    reflectionStateCheck
 } = require('../../middlewares/auth');
 
-router.post('/', [userTeamCheck], createFeedback);
+router.post('/', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], createFeedback);
 router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
-router.put('/:feedback_id', updateFeedback);
-router.delete("/:feedback_id", deleteFeedback);
+router.put('/:feedback_id', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], updateFeedback);
+router.delete("/:feedback_id", [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], deleteFeedback);
+router.get('/from-me', [userTeamCheck, reflectionTimeCheck], getFromMeToCertainMemberFeedbackAll);
 router.get("/from-team", getTeamAndUserFeedback); 
-router.get('/from-me', getFromMeToCertainMemberFeedbackAll);
 
 module.exports = router;
