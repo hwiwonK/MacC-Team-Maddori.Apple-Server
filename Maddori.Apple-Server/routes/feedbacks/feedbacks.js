@@ -4,7 +4,7 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite, start_content)
 // 회고에 새로운 피드백을 등록한다 
 async function createFeedback(req, res, next) {
-    console.log("피드백 생성하기");
+    // console.log("피드백 생성하기");
     const feedbackContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
@@ -109,7 +109,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
     피드백 type 별 feedback detail(keyword, content, start_content) */
 // 팀의 현재 회고에 담긴 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
 const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
-    console.log('특정 멤버에게 작성한 피드백 리스트 가져오기');
+    // console.log('특정 멤버에게 작성한 피드백 리스트 가져오기');
 
     try {
         const { reflection_id, team_id } = req.params;
@@ -150,7 +150,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         }
         feedbacksToCertainMember.map((data) => {
             const { type, ...contents } = data;
-            console.log(contents);
+            // console.log(contents);
             feedbacksToCertainMemberGroupByType[type].push(contents);
         });
 
