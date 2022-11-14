@@ -182,33 +182,47 @@ const deleteFeedback = async (req, res, next) => {
 //* reponse data: id, type, keyword, content, start_content, from_id, to_id, team_id, reflection_id
 //* 회고의 특정 유저와 유저가 속한 팀의 피드백을 분류하여 조회하는 API
 const getTeamAndUserFeedback = async (req, res) => {
+    const user_id = req.header('user_id');
 
     try {
         const member_id = req.query.members;
         const { team_id, reflection_id } = req.params
 
-    const userFeedbackData = await feedback.findAll({
-        where: {
-            team_id: team_id,
-            reflection_id: reflection_id,
-            from_id: member_id
-        }
+        const userFeedbackData = await feedback.findAll({
+            where: {
+                team_id: team_id,
+                reflection_id: reflection_id,
+                to_id: member_id,
+                from_id: user_id
+            },
+            include: {
+                model: user,
+                attributes: ['username'],
+                required: true
+            }
     });
 
     const teamFeedbackData = await feedback.findAll({
         where: {
             team_id: team_id,
             reflection_id: reflection_id,
-            from_id: {
+            to_id: {
                 [Op.ne]: member_id
-            }
+            },
+            from_id: user_id
         }
     })
-    console.log(teamFeedbackData);
+
+    if (user_id !== member_id) { 
+        const category = "others";
+    }
+    const category = "self";
+
     return res.status(200).json({
         success: true,
         message: "피드백 조회 성공",
         data: {
+            category: category,
             user_feedback: userFeedbackData,
             team_feedback: teamFeedbackData 
         }
