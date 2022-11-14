@@ -22,9 +22,9 @@ app.get('/', (req, res) => {
 });
 
 // 라우팅 (users, teams, reflections, feedbacks 로 분리)
-app.use('/users', require('./routes/users/index'));
-app.use('/teams', require('./routes/teams/index'));
-app.use('/teams/:team_id/reflections', require('./routes/reflections/index'));
-app.use('/teams/:team_id/reflections/:reflection_id/feedbacks', require('./routes/feedbacks/index'));
+app.use('api/v1/users', require('./routes/users/index'));
+app.use('api/v1/teams', require('./routes/teams/index'));
+app.use('api/v1/teams/:team_id/reflections', require('./routes/reflections/index'));
+app.use('api/v1/teams/:team_id/reflections/:reflection_id/feedbacks', require('./routes/feedbacks/index'));
 
 module.exports = app
