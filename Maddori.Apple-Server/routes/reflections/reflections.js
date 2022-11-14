@@ -1,5 +1,4 @@
-const { equal } = require('assert');
-const {user, team, userteam, reflection, feedback} = require('../../models');
+const {user, team, reflection, feedback} = require('../../models');
 
 // request data : user_id, team_id
 // response data : current_reflection_id, reflection_name, date, status, 회고에 속한 keywords 목록
