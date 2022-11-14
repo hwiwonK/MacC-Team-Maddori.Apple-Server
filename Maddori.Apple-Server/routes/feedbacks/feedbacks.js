@@ -1,4 +1,4 @@
-const {user, team, userteam, reflection, feedback, sequelize} = require('../../models');
+const {user, team, reflection, feedback } = require('../../models');
 const { Op } = require("sequelize");
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
