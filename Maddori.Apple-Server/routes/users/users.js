@@ -5,7 +5,7 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // response data : user_id, username
 // 새로운 user 생성하기
 async function userLogin(req, res, next) {
-    console.log("유저 로그인");
+    // console.log("유저 로그인");
     const userContent = req.body;
     // TODO: username 데이터 없는 경우 에러 처리 추가
 
@@ -31,7 +31,7 @@ async function userLogin(req, res, next) {
 // response data : userteam_id, user_id, team_id
 // 유저가 팀에 합류하기
 async function userJoinTeam(req, res, next) {
-    console.log("유저 팀 조인");
+    // console.log("유저 팀 조인");
     const userTeamContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
@@ -44,7 +44,7 @@ async function userJoinTeam(req, res, next) {
         });
         // 초대 코드가 일치하는 팀이 없을 경우
         if (requestTeam === null) {
-            console.log("team not found");
+            // console.log("team not found");
             // TODO: 초대 코드가 잘못 됐을 경우 에러 처리 추가
         }
         // 초대 코드가 일치하는 팀이 있는 경우, userteam 테이블 업데이트
@@ -72,7 +72,7 @@ async function userJoinTeam(req, res, next) {
 // response data : 결과 처리 여부
 // 유저가 팀을 탈퇴하기
 async function userLeaveTeam(req, res, next) {
-    console.log("유저 팀 탈퇴");
+    // console.log("유저 팀 탈퇴");
     
     try {
         const deletedUserTeam = await userteam.destroy({

@@ -4,7 +4,7 @@ const {user, team, userteam, reflection, feedback, sequelize} = require('../mode
 
 const userTeamCheck = async (req, res, next) => {
     try {
-        console.log('유저의 팀 검증');
+        // console.log('유저의 팀 검증');
         const user_id = req.header('user_id');
         const { team_id, ...other } = req.params;
 
@@ -29,7 +29,7 @@ const userTeamCheck = async (req, res, next) => {
 
 const userAdminCheck = async (req, res, next) => {
     try {
-        console.log('유저의 현재 팀 리더 검증');
+        // console.log('유저의 현재 팀 리더 검증');
         const user_id = req.header('user_id');
         const { team_id, ...other } = req.params;
 
@@ -55,7 +55,7 @@ const userAdminCheck = async (req, res, next) => {
 
 const reflectionTimeCheck = async (req, res, next) => {
     try {
-        console.log('회고 일정 체크');
+        // console.log('회고 일정 체크');
         let { team_id, reflection_id } = req.params;
 
         // 팀에서 진행 중인 현재 회고의 reflection_id 구하기
@@ -92,7 +92,7 @@ const reflectionTimeCheck = async (req, res, next) => {
 const reflectionStateCheck = (requiredState) => {
     return async (req, res, next) => {
         try {
-            console.log('회고의 상태 검증');
+            // console.log('회고의 상태 검증');
             let { team_id, reflection_id } = req.params;
 
             // 팀에서 진행 중인 현재 회고의 reflection_id 구하기

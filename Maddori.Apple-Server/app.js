@@ -10,11 +10,11 @@ app.use(express.json());
 // database 연결
 sequelize.sync({ force: false })
 .then(() => {
-    console.log('데이터베이스 연결 성공');
+    // console.log('데이터베이스 연결 성공');
 })
 .catch((err) => {
-    console.log('데이터베이스 연결 실패');
-    console.error(err);
+    // console.log('데이터베이스 연결 실패');
+    // console.error(err);
 });
 
 app.get('/', (req, res) => {

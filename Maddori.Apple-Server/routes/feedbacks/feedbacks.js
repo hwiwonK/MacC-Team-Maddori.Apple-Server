@@ -129,7 +129,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             },
             raw: true
         });
-        console.log(currentReflection);
+        // console.log(currentReflection);
 
         // 피드백을 받는 멤버의 정보 가져오기 (받는 멤버의 정보가 없을 경우 에러 처리)
         const membersDetail = await user.findByPk(members);
