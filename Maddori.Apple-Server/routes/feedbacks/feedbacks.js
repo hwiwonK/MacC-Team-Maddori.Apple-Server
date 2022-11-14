@@ -1,5 +1,4 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
-var sequelize = require('sequelize');
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite, start_content)
