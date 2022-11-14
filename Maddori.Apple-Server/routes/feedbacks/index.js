@@ -4,7 +4,11 @@ const {
     createFeedback,
     getCertainTypeFeedbackAll,
 } = require('./feedbacks');
+const {
+    userTeamCheck,
+    userAdminCheck
+} = require('../../middlewares/auth');
 
-router.post('/', createFeedback);
-router.get('/', getCertainTypeFeedbackAll);
+router.post('/', [userTeamCheck], createFeedback);
+router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
 module.exports = router;
