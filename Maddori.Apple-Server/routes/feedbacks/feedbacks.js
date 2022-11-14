@@ -96,7 +96,6 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
             }
         });
     } catch (error) {
-        console.log(error);
         return res.status(400).json({
             'success': false,
             'message': '피드백 정보 조회 실패',
@@ -105,7 +104,81 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
     }
 }
 
+//* request data: team_id, reflection_id, feedback_id, css_type, keyword, content, start
+//* response data: id, type, keyword, content, start_content, from_id, to_id, 
+//* team_id, reflection_id, reflection_name, 보내는 user_name
+//* 특정 피드백을 수정하는 API, 현재 진행중인 회고는 수정이 불가능하다.
+const updateFeedback = async (req, res, next) => {
+    try {
+        const { feedback_id } = req.params
+        const { type, keyword, content, start_content} = req.body;
+
+        const updatedFeedbackData = await feedback.update(
+            {
+              type: type,
+              keyword: keyword,
+              content: content,
+              start_content: start_content
+            },
+            { 
+                where: {
+                    id: feedback_id
+                }
+            });
+
+        const resultFeedbackData = await feedback.findByPk(feedback_id,
+            {
+                include: [{
+                        model: reflection,
+                    },
+                    {
+                        model: user
+                    }]
+            });
+
+        return res.status(200).json({
+            'success': true,
+            'message': '피드백 정보 수정 성공',
+            'detail': {
+                'feedback': resultFeedbackData
+            }})
+        } catch (error) {
+            return res.status(400).json({
+                    'success': false,
+                    'message': '피드백 정보 수정 실패',
+                    'detail': error.message
+                })
+        }
+    
+}
+
+//* request data: team_id, reflection_id, feedback_id
+//* 특정 피드백을 삭제하는 API
+const deleteFeedback = async (req, res, next) => {
+    try {
+        const { feedback_id } = req.params;
+
+        const feedbackData = await feedback.destroy({
+            where: {
+                id: feedback_id
+            }
+        });
+        return res.status(200).json({
+            'success': true,
+            'message': '피드백 정보 삭제 성공'
+        })
+    } catch (error) {
+        return res.status(400).json({
+            'success': false,
+            'message': '피드백 정보 삭제 실패',
+            'detail': error.message
+        })
+    }
+}
+ 
 module.exports = {
     createFeedback,
-    getCertainTypeFeedbackAll
+    getCertainTypeFeedbackAll,
+    updateFeedback,
+    deleteFeedback
 };
