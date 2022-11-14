@@ -3,6 +3,7 @@ const router = new express.Router({ mergeParams: true });
 const {
     createFeedback,
     getCertainTypeFeedbackAll,
+    getFromMeToCertainMemberFeedbackAll,
     updateFeedback,
     deleteFeedback
 } = require('./feedbacks');
@@ -17,5 +18,6 @@ router.post('/', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Befo
 router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
 router.put('/:feedback_id', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], updateFeedback);
 router.delete("/:feedback_id", [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], deleteFeedback);
+router.get('/from-me', [userTeamCheck, reflectionTimeCheck], getFromMeToCertainMemberFeedbackAll);
 
 module.exports = router;

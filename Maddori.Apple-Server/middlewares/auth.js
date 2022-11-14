@@ -59,7 +59,7 @@ const reflectionTimeCheck = async (req, res, next) => {
         let { team_id, reflection_id } = req.params;
 
         // 팀에서 진행 중인 현재 회고의 reflection_id 구하기
-        if (reflection_id === undefined) {
+        if (reflection_id === undefined || reflection_id === 'current') {
             const currentReflectionId = await team.findByPk(team_id, {
                 attributes: ['current_reflection_id'],
                 raw: true
@@ -93,7 +93,16 @@ const reflectionStateCheck = (requiredState) => {
     return async (req, res, next) => {
         try {
             console.log('회고의 상태 검증');
-            const { team_id, reflection_id } = req.params;
+            let { team_id, reflection_id } = req.params;
+
+            // 팀에서 진행 중인 현재 회고의 reflection_id 구하기
+            if (reflection_id === undefined || reflection_id === 'current') {
+                const currentReflectionId = await team.findByPk(team_id, {
+                    attributes: ['current_reflection_id'],
+                    raw: true
+                });
+                reflection_id = currentReflectionId.current_reflection_id;
+            }
 
             // 회고의 상태 구하기
             const reflectionState = await reflection.findOne({
