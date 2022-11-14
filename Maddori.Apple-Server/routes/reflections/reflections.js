@@ -1,4 +1,4 @@
-const {user, team, userteam, reflection, feedback} = require('../../models');
+const {user, team, reflection, feedback} = require('../../models');
 
 // request data : user_id, team_id
 // response data : current_reflection_id, reflection_name, date, status, 회고에 속한 keywords 목록
@@ -120,8 +120,61 @@ const getPastReflectionList = async (req, res, next) => {
     }
 }
 
+
+//* request data: reflection_id, team_id
+//* response data: id, reflection_name, date, state, team_id
+//* 특정 회고를 종료하는 API
+const endInProgressReflection = async (req, res, next) => {
+    try {
+        const { reflection_id, team_id } = req.params;
+
+        await reflection.update(
+            {
+                state: "Done"
+            },
+            {
+                where:{
+                    id: reflection_id,
+                    team_id: team_id
+                    }
+            })
+        const data = await reflection.findByPk(reflection_id);
+
+        const newReflectionData = await reflection.create({
+            team_id: team_id
+        })
+        console.log(`newReflectionData : ${newReflectionData.id}`);
+
+        const updateTeamCurrentReflectionId = await team.update(
+            {
+                current_reflection_id: newReflectionData.id
+            },
+            {
+                where: {
+                    id: team_id
+                }
+            });
+
+        return res.status(200).json({
+            success: true,
+            message: "회고 종료 성공",
+            data: {
+                reflection: data
+            }
+        })
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        })
+    }
+    
+}
+
+
 module.exports = {
     getCurrentReflectionDetail,
     updateReflectionDetail,
-    getPastReflectionList
+    getPastReflectionList,
+    endInProgressReflection
 };
