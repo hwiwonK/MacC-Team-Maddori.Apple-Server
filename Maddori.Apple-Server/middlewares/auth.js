@@ -53,25 +53,47 @@ const userAdminCheck = async (req, res, next) => {
     }
 }
 
+const reflectionTimeCheck = async (req, res, next) => {
+    try {
+        console.log('회고 일정 체크');
+        let { team_id, reflection_id } = req.params;
+
+        // 팀에서 진행 중인 현재 회고의 reflection_id 구하기
+        if (reflection_id === undefined) {
+            const currentReflectionId = await team.findByPk(team_id, {
+                attributes: ['current_reflection_id'],
+                raw: true
+            });
+            reflection_id = currentReflectionId.current_reflection_id;
+        }
+
+        // 회고 일정이 지났다면 회고 state update
+        const updateReflectionState = await reflection.update({
+            state: 'Progressing'
+        },{
+            where: {
+                id: reflection_id,
+                team_id: team_id,
+                date: { [Op.lt]: new Date() }
+            },
+            raw: true
+        });
+        next();
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: '서버 에러 발생',
+            detail: error.message
+        });
+    }
+}
+
 const reflectionStateCheck = (requiredState) => {
     return async (req, res, next) => {
         try {
             console.log('회고의 상태 검증');
             const { team_id, reflection_id } = req.params;
-
-            // 회고의 Before 상태를 요구한다면 회고 일정 지났는지 체크, 지났다면 상태 변경
-            if (requiredState === 'Before') {
-                const updateReflectionState = await reflection.update({
-                    state: 'Progressing'
-                },{
-                    where: {
-                        id: reflection_id,
-                        team_id: team_id,
-                        date: { [Op.lt]: new Date() }
-                    },
-                    raw: true
-                });
-            }
 
             // 회고의 상태 구하기
             const reflectionState = await reflection.findOne({
@@ -97,5 +119,6 @@ const reflectionStateCheck = (requiredState) => {
 module.exports = {
     userTeamCheck,
     userAdminCheck,
+    reflectionTimeCheck,
     reflectionStateCheck
 }
