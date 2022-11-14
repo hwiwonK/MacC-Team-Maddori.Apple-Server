@@ -99,6 +99,21 @@ const endInProgressReflection = async (req, res, next) => {
             })
         const data = await reflection.findByPk(reflection_id);
 
+        const newReflectionData = await reflection.create({
+            team_id: team_id
+        })
+        console.log(`newReflectionData : ${newReflectionData.id}`);
+
+        const updateTeamCurrentReflectionId = await team.update(
+            {
+                current_reflection_id: newReflectionData.id
+            },
+            {
+                where: {
+                    id: team_id
+                }
+            });
+
         return res.status(200).json({
             success: true,
             message: "회고 종료 성공",
@@ -109,7 +124,7 @@ const endInProgressReflection = async (req, res, next) => {
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: "회고 종료 실패"
+            message: error.message
         })
     }
     
