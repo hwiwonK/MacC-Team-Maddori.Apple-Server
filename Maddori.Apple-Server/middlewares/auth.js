@@ -60,8 +60,6 @@ const reflectionStateCheck = (requiredState) => {
             const { team_id, reflection_id } = req.params;
 
             // 회고의 Before 상태를 요구한다면 회고 일정 지났는지 체크, 지났다면 상태 변경
-            // const nowDate = new Date();
-            // console.log(nowDate);
             if (requiredState === 'Before') {
                 const updateReflectionState = await reflection.update({
                     state: 'Progressing'
@@ -73,7 +71,6 @@ const reflectionStateCheck = (requiredState) => {
                     },
                     raw: true
                 });
-                // console.log(updateReflectionState);
             }
 
             // 회고의 상태 구하기
@@ -84,7 +81,6 @@ const reflectionStateCheck = (requiredState) => {
                 },
                 raw: true
             });
-            // console.log(reflectionState.date);
             if (reflectionState.state !== requiredState) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
             next();
 
