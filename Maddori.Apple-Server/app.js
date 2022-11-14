@@ -17,10 +17,9 @@ sequelize.sync({ force: false })
     console.error(err);
 });
 
-
 app.get('/', (req, res) => {
   res.send('Hello World! This is KeyGo server')
-})
+});
 
 // 라우팅 (users, teams, reflections, feedbacks 로 분리)
 app.use('/users', require('./routes/users/index'));

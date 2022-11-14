@@ -24,7 +24,6 @@ async function getCurrentReflectionDetail(req, res, next) {
             },
             raw : true
         });
-        console.log(keywordsList);
         
         // 위 데이터 중 필요한 부분을 합친 response 데이터 만들기
         const reflectionFinalInformation = {
@@ -51,6 +50,47 @@ async function getCurrentReflectionDetail(req, res, next) {
     }
 }
 
+// request data : user_id, team_id, reflection_id
+// response data : reflection_id, reflection_name, date, status
+// 팀의 리더가 팀의 현재 회고에 디테일 정보(이름, 일시)를 추가한다.
+const updateReflectionDetail = async (req, res, next) => {
+    // TODO: 유저가 현재 팀의 리더인지 검증(미들웨어)
+    // TODO: 회고의 status가 회고 정보를 추가할 수 있는 상태인지 검증(미들웨어)
+    try {
+        console.log('회고 정보 추가하기');
+        const { reflection_id } = req.params;
+        const { reflection_name, reflection_date } = req.body;
+
+        // 피드백 상세 정보 추가
+        const updateReflectionSuccess = await reflection.update({
+            reflection_name: reflection_name,
+            date: reflection_date,
+            state: 'Before'
+        }, {
+            where: {
+                id: reflection_id,
+            },
+        });
+
+        if (updateReflectionSuccess[0] === 0) throw Error('일치하는 회고 정보를 찾지 못함');
+
+        const reflectionDetail = await reflection.findByPk(reflection_id);
+
+        res.status(200).json({
+            success: true,
+            message: '회고 디테일 정보 추가 성공',
+            detail: reflectionDetail
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '회고 디테일 정보 추가 실패',
+            detail: error.message
+        });
+    }
+}
 
 //* 진행했던 회고목록 조회
 //* request data: team_id
@@ -79,6 +119,7 @@ const getPastReflectionList = async (req, res, next) => {
         });
     }
 }
+
 
 //* request data: reflection_id, team_id
 //* response data: id, reflection_name, date, state, team_id
@@ -133,6 +174,7 @@ const endInProgressReflection = async (req, res, next) => {
 
 module.exports = {
     getCurrentReflectionDetail,
+    updateReflectionDetail,
     getPastReflectionList,
     endInProgressReflection
 };
