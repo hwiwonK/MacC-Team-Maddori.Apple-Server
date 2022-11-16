@@ -12,7 +12,7 @@ const {
 } = require('../../middlewares/auth');
 
 router.post('/login', userLogin);
-router.post('/join-team', userJoinTeam);
+router.post('/join-team/:team_id', userJoinTeam);
 router.delete('/team/:team_id/leave', [userTeamCheck], userLeaveTeam);
 
 module.exports = router;

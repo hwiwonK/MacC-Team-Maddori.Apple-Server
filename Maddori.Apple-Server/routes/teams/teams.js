@@ -84,6 +84,40 @@ async function createTeam(req, res, next) {
     }
 }
 
+// request data : user_id, team_code
+// response date : team_id, team_name
+// 팀 코드를 통해 해당 팀의 이름을 찾는다. 일치하는 팀이 없을 경우 에러를 반환한다.
+const getCertainTeamName = async (req, res, next) => {
+    try {
+        const user_id = req.header('user_id');
+        const { invitation_code } = req.query;
+        const requestTeam = await team.findOne({
+            attributes: ['id', 'team_name'],
+            where: {
+                invitation_code: invitation_code
+            },
+            raw: true
+        });
+        // 초대 코드가 일치하는 팀이 없을 경우
+        if (requestTeam === null) {
+            throw Error('초대 코드가 잘못됨');
+        }
+        res.status(200).json({
+            success: true,
+            message: '팀 정보 가져오기 성공',
+            detail: requestTeam
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '팀 정보 가져오기 실패',
+            detail: error.message
+        });
+    }
+} 
+
 // request data : user_id, team_id
 // response data : team_id, team_name, invitation_code, admin
 // 팀의 정보 가져오기
@@ -175,6 +209,7 @@ async function getTeamMembers(req, res, next) {
 
 module.exports = {
     createTeam,
+    getCertainTeamName,
     getCertainTeamDetail,
     getTeamMembers
 };
