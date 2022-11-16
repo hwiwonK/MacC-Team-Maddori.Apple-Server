@@ -155,12 +155,12 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         
         // type 기준으로 그룹화하여 묶기
         const feedbacksToCertainMemberGroupByType = {
-            'team_id': team_id,
+            'team_id': parseInt(team_id),
             'reflection_id': currentReflection.current_reflection_id,
             'reflection_name' : currentReflection.reflection_name,
             'reflection_status' : currentReflection.state,
-            'from_id': user_id,
-            'to_id': members,
+            'from_id': parseInt(user_id),
+            'to_id': parseInt(members),
             'to_username': membersDetail.username,
             'Continue': [],
             'Stop': []
