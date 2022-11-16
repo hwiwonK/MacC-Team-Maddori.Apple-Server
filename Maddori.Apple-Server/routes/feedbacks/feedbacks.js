@@ -51,24 +51,27 @@ async function createFeedback(req, res, next) {
 // 만약 reflection_id 가 recent인 경우에는 가장 최근 회고에서 feedback을 불러온다.
 const getCertainTypeFeedbackAll = async (req, res, next) => {
     try {
+        const user_id = req.header('user_id');
         const { type } = req.query;
         const { team_id, reflection_id } = req.params;
 
-        if (reflection_id == 'recent') {
+        if (reflection_id === 'recent') {
             const teamData = await team.findByPk(team_id)
             const recentReflectionId = teamData.recent_reflection_id;
             const feedbackData = await feedback.findAll({
                 where: {
                     team_id: team_id,
                     reflection_id: recentReflectionId,
-                    type: type
+                    type: type,
+                    to_id: user_id
                 },
                 include: [
                     {
                         model: reflection, where: { id: recentReflectionId }
                     },
                     {
-                        model: user
+                        model: user,
+                        as: 'from_user'
                     }
                 ]
             })  
@@ -76,7 +79,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                 'success': true,
                 'message': '최근 회고 피드백 조회 성공',
                 'detail': {
-                    'feedback': [feedbackData]
+                    'feedback': feedbackData
                 }
             });         
         }
@@ -84,14 +87,16 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
             where: {
                 team_id: team_id,
                 reflection_id: reflection_id,
-                type: type
+                type: type,
+                to_id: user_id
             },
             include: [
                 {
-                    model: reflection, where: { id: recentReflectionId }
+                    model: reflection, where: { id: reflection_id }
                 },
                 {
-                    model: user
+                    model: user,
+                    as: 'from_user'
                 }
             ]
         })
@@ -99,7 +104,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
             'success': true,
             'message': '피드백 정보 조회 성공',
             'detail': {
-                'feedback': [feedbackData]
+                'feedback': feedbackData
             }
         });
     } catch (error) {
@@ -279,6 +284,7 @@ const getTeamAndUserFeedback = async (req, res) => {
             },
             include: {
                 model: user,
+                as: 'from_user',
                 attributes: ['username'],
                 required: true
             }
@@ -288,17 +294,23 @@ const getTeamAndUserFeedback = async (req, res) => {
         where: {
             team_id: team_id,
             reflection_id: reflection_id,
-            to_id: {
-                [Op.ne]: member_id
-            },
-            from_id: user_id
+            to_id: member_id,
+            from_id: {
+                [Op.ne]: user_id
+            }
+        },
+        include: {
+            model: user,
+            as: 'from_user',
+            attributes: ['username'],
+            required: true,
         }
-    })
+    });
 
-    let category = "self";
+    let category = 'self';
     
     if (user_id !== member_id) { 
-       category = "others";
+       category = 'others';
     }
     
     return res.status(200).json({
