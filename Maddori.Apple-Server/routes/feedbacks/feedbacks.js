@@ -299,7 +299,7 @@ const getTeamAndUserFeedback = async (req, res) => {
     return res.status(200).json({
         success: true,
         message: "피드백 조회 성공",
-        data: {
+        detail: {
             category: category,
             user_feedback: userFeedbackData,
             team_feedback: teamFeedbackData 
@@ -309,7 +309,7 @@ const getTeamAndUserFeedback = async (req, res) => {
         return res.status(400).json({
             success: true,
             message: "피드백 조회 실패",
-            data: error.message
+            detail: error.message
         })
     }
     
