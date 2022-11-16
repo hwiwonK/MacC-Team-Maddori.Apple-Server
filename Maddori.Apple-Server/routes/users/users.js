@@ -14,7 +14,7 @@ async function userLogin(req, res, next) {
         res.status(201).json({
             success: true,
             message: '유저 로그인 성공',
-            datail: createdUser
+            detail: createdUser
         });
 
     } catch (error) {
