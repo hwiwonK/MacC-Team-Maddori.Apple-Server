@@ -12,16 +12,21 @@ async function createFeedback(req, res, next) {
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
     
     try {
+        // 입력 받기
+        const user_id = req.header('user_id');
+        const { team_id, reflection_id } = req.params;
+        const { type, keyword, content, start_content, to_id } = req.body;
+
         // 피드백 등록
         const createdFeedback = await feedback.create({
-            type: feedbackContent.type,
-            keyword: feedbackContent.keyword,
-            content: feedbackContent.content,
-            start_content: feedbackContent.start_content,
-            from_id: req.header('user_id'),
-            to_id: feedbackContent.to_id,
-            team_id: req.params.team_id,
-            reflection_id: req.params.reflection_id
+            type: type,
+            keyword: keyword,
+            content: content,
+            start_content: start_content,
+            from_id: parseInt(user_id),
+            to_id: parseInt(to_id),
+            team_id: parseInt(team_id),
+            reflection_id: parseInt(reflection_id)
         });
 
         res.status(201).json({
