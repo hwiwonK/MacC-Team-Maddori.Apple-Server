@@ -288,17 +288,22 @@ const getTeamAndUserFeedback = async (req, res) => {
         where: {
             team_id: team_id,
             reflection_id: reflection_id,
-            to_id: {
-                [Op.ne]: member_id
-            },
-            from_id: user_id
+            to_id: member_id,
+            from_id: {
+                [Op.ne]: user_id
+            }
+        },
+        include: {
+            model: user,
+            attributes: ['username'],
+            required: true,
         }
-    })
+    });
 
-    let category = "self";
+    let category = 'self';
     
     if (user_id !== member_id) { 
-       category = "others";
+       category = 'others';
     }
     
     return res.status(200).json({
