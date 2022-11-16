@@ -27,37 +27,39 @@ async function userLogin(req, res, next) {
     }
 }
 
-// request data : user_id, invitation_code
+// request data : user_id, team_id
 // response data : userteam_id, user_id, team_id
 // 유저가 팀에 합류하기
 async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
     const user_id = req.header('user_id');
-    const { invitation_code } = req.body;
+    const { team_id } = req.params;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
-        const requestTeam = await team.findOne({
+        // team 정보 유효한지 체크
+        const requestTeam = await team.findByPk(team_id);
+        if (requestTeam === null) throw Error('요청하는 팀이 존재하지 않음');
+
+        // userteam 테이블 업데이트
+        const [createdUserteam, created] = await userteam.findOrCreate({
             where: {
-                invitation_code: invitation_code
+                user_id: user_id,
+                team_id: team_id
             },
-            raw: true
+            defaults: {
+                user_id: user_id,
+                team_id: team_id
+            }
         });
-        // 초대 코드가 일치하는 팀이 없을 경우
-        if (requestTeam === null) {
-            throw Error('초대 코드가 잘못됨');
-        }
-        // 초대 코드가 일치하는 팀이 있는 경우, userteam 테이블 업데이트
-        const createdUserteam = await userteam.create({
-            user_id: parseInt(user_id),
-            team_id: requestTeam.id
-        });
+
+        if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
         res.status(201).json({
             success: true,
             message: '유저 팀 합류 성공',
             detail: createdUserteam
         });
-        // TODO: response 과정 에러 처리 추가
+
     } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
