@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes){
         
         static associate(models) {
             feedback.belongsTo(models.user, {
+                as: 'from_user',
                 foreignKey: {
                     name: 'from_id',
                     allowNull: true
@@ -14,6 +15,7 @@ module.exports = function(sequelize, DataTypes){
                 hooks: true
             }),
             feedback.belongsTo(models.user, {
+                as: 'to_user',
                 foreignKey: {
                     name: 'to_id',
                     allowNull: false

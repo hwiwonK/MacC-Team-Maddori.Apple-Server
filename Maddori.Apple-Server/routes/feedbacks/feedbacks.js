@@ -279,6 +279,7 @@ const getTeamAndUserFeedback = async (req, res) => {
             },
             include: {
                 model: user,
+                as: 'from_user',
                 attributes: ['username'],
                 required: true
             }
@@ -295,6 +296,7 @@ const getTeamAndUserFeedback = async (req, res) => {
         },
         include: {
             model: user,
+            as: 'from_user',
             attributes: ['username'],
             required: true,
         }
