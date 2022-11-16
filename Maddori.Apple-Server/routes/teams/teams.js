@@ -91,20 +91,23 @@ async function getCertainTeamDetail(req, res, next) {
     // console.log("팀의 정보 가져오기");
 
     try {
+        const user_id = req.header('user_id');
+        const { team_id } = req.params;
+
         // 팀의 team_name, invitation_code
-        const teamBasicInformation = await team.findByPk(req.params.team_id);
+        const teamBasicInformation = await team.findByPk(team_id);
         // 유저가 팀의 리더인지 확인
         const teamLeader = await userteam.findOne({
             where: {
-                user_id: req.header('user_id'),
-                team_id: req.params.team_id
+                user_id: user_id,
+                team_id: team_id
             },
             raw: true
         });
 
         // 위 데이터 중 필요한 부분을 합친 response 데이터 만들기
         const teamFinalInformation = {
-            team_id: req.params.team_id,
+            team_id: parseInt(team_id),
             team_name: teamBasicInformation.team_name,
             invitation_code: teamBasicInformation.invitation_code,
             admin: teamLeader.admin
