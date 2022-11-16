@@ -110,7 +110,7 @@ async function getCertainTeamDetail(req, res, next) {
             team_id: parseInt(team_id),
             team_name: teamBasicInformation.team_name,
             invitation_code: teamBasicInformation.invitation_code,
-            admin: teamLeader.admin
+            admin: teamLeader.admin === 0 ? false : true
         }
 
         res.status(200).json({
