@@ -158,7 +158,7 @@ const endInProgressReflection = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "회고 종료 성공",
-            data: {
+            detail: {
                 reflection: data
             }
         })

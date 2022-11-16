@@ -12,16 +12,21 @@ async function createFeedback(req, res, next) {
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
     
     try {
+        // 입력 받기
+        const user_id = req.header('user_id');
+        const { team_id, reflection_id } = req.params;
+        const { type, keyword, content, start_content, to_id } = req.body;
+
         // 피드백 등록
         const createdFeedback = await feedback.create({
-            type: feedbackContent.type,
-            keyword: feedbackContent.keyword,
-            content: feedbackContent.content,
-            start_content: feedbackContent.start_content,
-            from_id: req.header('user_id'),
-            to_id: feedbackContent.to_id,
-            team_id: req.params.team_id,
-            reflection_id: req.params.reflection_id
+            type: type,
+            keyword: keyword,
+            content: content,
+            start_content: start_content,
+            from_id: parseInt(user_id),
+            to_id: parseInt(to_id),
+            team_id: parseInt(team_id),
+            reflection_id: parseInt(reflection_id)
         });
 
         res.status(201).json({
@@ -150,12 +155,12 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         
         // type 기준으로 그룹화하여 묶기
         const feedbacksToCertainMemberGroupByType = {
-            'team_id': team_id,
+            'team_id': parseInt(team_id),
             'reflection_id': currentReflection.current_reflection_id,
             'reflection_name' : currentReflection.reflection_name,
             'reflection_status' : currentReflection.state,
-            'from_id': user_id,
-            'to_id': members,
+            'from_id': parseInt(user_id),
+            'to_id': parseInt(members),
             'to_username': membersDetail.username,
             'Continue': [],
             'Stop': []
@@ -299,7 +304,7 @@ const getTeamAndUserFeedback = async (req, res) => {
     return res.status(200).json({
         success: true,
         message: "피드백 조회 성공",
-        data: {
+        detail: {
             category: category,
             user_feedback: userFeedbackData,
             team_feedback: teamFeedbackData 
@@ -309,7 +314,7 @@ const getTeamAndUserFeedback = async (req, res) => {
         return res.status(400).json({
             success: true,
             message: "피드백 조회 실패",
-            data: error.message
+            detail: error.message
         })
     }
     

@@ -32,24 +32,24 @@ async function userLogin(req, res, next) {
 // 유저가 팀에 합류하기
 async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
-    const userTeamContent = req.body;
+    const user_id = req.header('user_id');
+    const { invitation_code } = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
         const requestTeam = await team.findOne({
             where: {
-                invitation_code: userTeamContent.invitation_code
+                invitation_code: invitation_code
             },
             raw: true
         });
         // 초대 코드가 일치하는 팀이 없을 경우
         if (requestTeam === null) {
-            // console.log("team not found");
-            // TODO: 초대 코드가 잘못 됐을 경우 에러 처리 추가
+            throw Error('초대 코드가 잘못됨');
         }
         // 초대 코드가 일치하는 팀이 있는 경우, userteam 테이블 업데이트
         const createdUserteam = await userteam.create({
-            user_id: req.header('user_id'),
+            user_id: parseInt(user_id),
             team_id: requestTeam.id
         });
         res.status(201).json({
