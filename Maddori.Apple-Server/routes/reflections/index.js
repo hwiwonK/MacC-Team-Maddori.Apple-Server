@@ -13,7 +13,7 @@ const {
     reflectionStateCheck
 } = require('../../middlewares/auth');
 
-router.patch('/:reflection_id/end', [userAdminCheck], endInProgressReflection);
+router.patch('/:reflection_id/end', [userTeamCheck, userAdminCheck, reflectionStateCheck('Progressing')], endInProgressReflection);
 router.get('/', [userTeamCheck], getPastReflectionList);
 router.get('/current', [userTeamCheck, reflectionTimeCheck], getCurrentReflectionDetail);
 router.patch('/:reflection_id', [userTeamCheck, userAdminCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired')], updateReflectionDetail);
