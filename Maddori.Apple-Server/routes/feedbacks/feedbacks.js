@@ -220,7 +220,8 @@ const updateFeedback = async (req, res, next) => {
                         model: reflection,
                     },
                     {
-                        model: user
+                        model: user,
+                        as: 'to_user'
                     }]
             });
 
