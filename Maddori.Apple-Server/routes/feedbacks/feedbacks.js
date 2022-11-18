@@ -217,26 +217,26 @@ const updateFeedback = async (req, res, next) => {
         const resultFeedbackData = await feedback.findByPk(feedback_id,
             {
                 include: [{
-                        model: reflection,
-                    },
-                    {
-                        model: user,
-                        as: 'to_user'
-                    }]
+                    model: reflection,
+                },
+                {
+                    model: user,
+                    as: 'to_user'
+                }],
             });
 
         return res.status(200).json({
             'success': true,
             'message': '피드백 정보 수정 성공',
-            'detail': {
-                'feedback': resultFeedbackData
-            }})
+            'detail': resultFeedbackData
+        });
+
         } catch (error) {
             return res.status(400).json({
-                    'success': false,
-                    'message': '피드백 정보 수정 실패',
-                    'detail': error.message
-                })
+                'success': false,
+                'message': '피드백 정보 수정 실패',
+                'detail': error.message
+            })
         }
     
 }
