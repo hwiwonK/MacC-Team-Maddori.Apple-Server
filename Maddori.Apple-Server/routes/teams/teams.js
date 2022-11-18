@@ -173,7 +173,7 @@ async function getTeamMembers(req, res, next) {
         // TODO : 불필요한 필드 제거 (user.username)
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({
-            attributes: ['user_id', 'user.username'],
+            attributes: ['user.id', 'user.username'],
             where: {
                 team_id: req.params.team_id
             },
@@ -184,6 +184,7 @@ async function getTeamMembers(req, res, next) {
             },
             raw: true
         });
+        console.log(teamMemberList);
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
         teamMemberList.map((data) => (delete data['user.username']));
