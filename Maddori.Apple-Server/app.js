@@ -21,6 +21,8 @@ app.get('/', (req, res) => {
   res.send('Hello World! This is KeyGo server')
 });
 
+app.get('/api/vi/login', require('./routes/auth/index'));
+
 // 라우팅 (users, teams, reflections, feedbacks 로 분리)
 app.use('/api/v1/users', require('./routes/users/index'));
 app.use('/api/v1/teams', require('./routes/teams/index'));
