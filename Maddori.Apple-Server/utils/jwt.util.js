@@ -16,7 +16,7 @@ const sign = async (user_id) => {
 const verify = async (token) => {
     try {
         // console.log('verifying token');
-        const decoded = jwt.verify(token, secret, {algorithm: 'RS256'});
+        const decoded = jwt.verify(token, secret);
         return {
             type: true,
             decoded: decoded,
@@ -33,7 +33,7 @@ const verify = async (token) => {
 const refresh = async () => {
     try {
         return jwt.sign({}, secret, {
-            expiresIn: '2y',
+            expiresIn: '10y',
             algorithm: 'HS256',
         });
     } catch (error) {

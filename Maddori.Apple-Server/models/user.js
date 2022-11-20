@@ -27,6 +27,14 @@ module.exports = function(sequelize, DataTypes){
                 },
                 onDelete: 'CASCADE',
                 hooks: true
+            }),
+            user.hasOne(models.usertoken, {
+                foreignKey: {
+                    name: 'user_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
             })
         }
     }

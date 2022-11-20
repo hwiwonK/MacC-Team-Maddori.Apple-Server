@@ -1,4 +1,4 @@
-const {user, team, userteam, reflection, feedback } = require('../../models');
+const {user, team, userteam, reflection, feedback, usertoken } = require('../../models');
 const jwtUtil = require('../../utils/jwt.util');
 const jwt = require('jsonwebtoken');
 // const request = require('request'); // TODO: 추후 적용
@@ -32,10 +32,19 @@ const appleLogin = async (req, res, next) => {
 
         // token 생성
         const accessToken = await jwtUtil.sign(loginedUser.id);
-        const refreshToken = await jwtUtil.refresh(loginedUser.id);
+        const refreshToken = await jwtUtil.refresh(loginedUser.id);        
         
         // 이미 있는 user일 경우
         if (created === false) {
+            // refresh token db에 업데이트
+            await usertoken.update({
+                refresh_token: refreshToken,
+            },{
+                where: {
+                    user_id: loginedUser.id
+                }
+            });
+
             res.status(200).json({
                 success: true,
                 message: '유저 로그인 성공',
@@ -51,6 +60,12 @@ const appleLogin = async (req, res, next) => {
             });
         } else {
             // 새로 생성된 user일 경우
+            // refresh token db에 업데이트
+            await usertoken.create({
+                user_id: loginedUser.id,
+                refresh_token: refreshToken
+            });
+
             res.status(200).json({
                 success: true,
                 message: '유저 회원가입과 로그인 성공',
@@ -75,8 +90,6 @@ const appleLogin = async (req, res, next) => {
         });
     }
 }
-
-
 
 module.exports = {
     appleLogin
