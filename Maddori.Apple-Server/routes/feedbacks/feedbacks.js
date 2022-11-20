@@ -253,12 +253,21 @@ const updateFeedback = async (req, res, next) => {
 const deleteFeedback = async (req, res, next) => {
     try {
         const { feedback_id } = req.params;
+        const user_id = req.header('user_id');
 
         const feedbackData = await feedback.destroy({
             where: {
-                id: feedback_id
+                id: feedback_id,
+                user_id: user_id
             }
         });
+        if (!feedbackData) {
+            return res.status(400).json({
+                'success': true,
+                'message': '삭제할 피드백 정보가 없습니다.'
+            })
+        }
+
         return res.status(200).json({
             'success': true,
             'message': '피드백 정보 삭제 성공'
