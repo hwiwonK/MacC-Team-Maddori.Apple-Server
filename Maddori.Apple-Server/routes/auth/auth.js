@@ -15,6 +15,7 @@ const socialLogin = async (req, res, next) => {
 
         // TODO : 알맞은 공개키 찾아 decoding에 적용하기
         // identity token 값에서 user 정보 가져오기
+
         const { email, sub, ...others } = jwt.decode(token);
 
         console.log(jwt.decode(token));
