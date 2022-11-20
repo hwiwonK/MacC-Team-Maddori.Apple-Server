@@ -2,9 +2,9 @@ const express = require('express');
 const router = new express.Router({ mergeParams: true });
 
 const {
-    socialLogin
+    appleLogin
 } = require('./auth');
 
-router.post('/', socialLogin);
+router.post('/', appleLogin);
 
 module.exports = router;

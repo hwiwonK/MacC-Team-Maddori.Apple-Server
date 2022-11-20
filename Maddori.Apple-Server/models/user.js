@@ -42,7 +42,17 @@ module.exports = function(sequelize, DataTypes){
             username: {
                 field: "username",
                 type: DataTypes.STRING(6),
-                allowNull: false
+                allowNull: true
+            },
+            email: {
+                field: "email",
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            sub: {
+                field: "sub",
+                type: DataTypes.STRING,
+                allowNull: true
             }
         }, {
             sequelize,
