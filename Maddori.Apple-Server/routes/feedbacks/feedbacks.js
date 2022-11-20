@@ -206,7 +206,8 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 //* 특정 피드백을 수정하는 API, 현재 진행중인 회고는 수정이 불가능하다.
 const updateFeedback = async (req, res, next) => {
     try {
-        const { feedback_id } = req.params
+        const user_id = req.header('user_id');
+        const { feedback_id } = req.params;
         const { type, keyword, content, start_content} = req.body;
 
         const updatedFeedbackData = await feedback.update(
@@ -218,9 +219,17 @@ const updateFeedback = async (req, res, next) => {
             },
             { 
                 where: {
-                id: feedback_id
+                id: feedback_id,
+                user_id: user_id
             }
         })
+
+        if (!updatedFeedbackData) {
+            return res.status(400).json({
+                'success': false,
+                'message': '업데이트 할 피드백 정보가 없습니다.'
+            });
+        };
 
         const resultFeedbackData = await feedback.findByPk(feedback_id,
             {
@@ -263,7 +272,7 @@ const deleteFeedback = async (req, res, next) => {
         });
         if (!feedbackData) {
             return res.status(400).json({
-                'success': true,
+                'success': false,
                 'message': '삭제할 피드백 정보가 없습니다.'
             })
         }
