@@ -7,15 +7,18 @@ const {
     updateFeedback,
     deleteFeedback,
     getTeamAndUserFeedback
-
 } = require('./feedbacks');
 const {
+    userCheck,
     userTeamCheck,
     userAdminCheck,
     reflectionTimeCheck,
     reflectionStateCheck
 } = require('../../middlewares/auth');
 
+// user auth 검증
+router.use('/', userCheck);
+// handler
 router.post('/', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], createFeedback);
 router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
 router.put('/:feedback_id', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], updateFeedback);

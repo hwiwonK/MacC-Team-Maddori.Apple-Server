@@ -7,7 +7,7 @@ const secret = process.env.JWT_KEY;
 // 유저 정보 검증하기
 const userCheck = async (req, res, next) => {
     try {
-        // console.log('유저 검증 시작');
+        console.log('유저 검증 시작');
         // accessToken 유효한지 검증, 유효하다면 user_id 값 가져오기
         const accessToken = req.header('access_token').replace(/"/g, ''); // 따옴표 제거
         let user_id;
@@ -36,7 +36,7 @@ const userCheck = async (req, res, next) => {
 const userTeamCheck = async (req, res, next) => {
     try {
         // console.log('유저의 팀 검증');
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { team_id, ...other } = req.params;
 
         // 요청을 보낸 유저가 요청 대상 팀(team_id)에 속해있는지 확인하기
@@ -61,7 +61,7 @@ const userTeamCheck = async (req, res, next) => {
 const userAdminCheck = async (req, res, next) => {
     try {
         // console.log('유저의 현재 팀 리더 검증');
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { team_id, ...other } = req.params;
 
         // 요청을 보낸 유저가 요청 대상 팀(team_id)의 리더인지 확인하기

@@ -7,6 +7,7 @@ async function getCurrentReflectionDetail(req, res, next) {
     // console.log("현재 회고 정보 가져오기");
 
     try {
+        const user_id = req.user_id;
         // 팀의 현재 회고 id
         const currentReflectionId = await team.findByPk(req.params.team_id, {
             attributes: ['current_reflection_id'],
@@ -58,6 +59,7 @@ const updateReflectionDetail = async (req, res, next) => {
     // TODO: 회고의 status가 회고 정보를 추가할 수 있는 상태인지 검증(미들웨어)
     try {
         // console.log('회고 정보 추가하기');
+        const user_id = req.user_id;
         const { reflection_id } = req.params;
         const { reflection_name, reflection_date } = req.body;
 
@@ -96,9 +98,10 @@ const updateReflectionDetail = async (req, res, next) => {
 //* request data: team_id
 //* response data: id, reflection_name, date, state, team_id
 const getPastReflectionList = async (req, res, next) => {
-    const { team_id } = req.params;
 
     try {
+        const user_id = req.user_id;
+        const { team_id } = req.params;
         const reflectionData = await reflection.findAll({
             where: {
                 team_id: team_id,
@@ -127,6 +130,7 @@ const getPastReflectionList = async (req, res, next) => {
 //* 특정 회고를 종료하는 API
 const endInProgressReflection = async (req, res, next) => {
     try {
+        const user_id = req.user_id;
         const { reflection_id, team_id } = req.params;
 
         await reflection.update(

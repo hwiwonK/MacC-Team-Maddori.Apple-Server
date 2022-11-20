@@ -84,13 +84,14 @@ async function userJoinTeam(req, res, next) {
 // response data : 결과 처리 여부
 // 유저가 팀을 탈퇴하기
 async function userLeaveTeam(req, res, next) {
-    // console.log("유저 팀 탈퇴");
     
     try {
+        const user_id = req.user_id;
+        const { team_id } = req.params;
         const deletedUserTeam = await userteam.destroy({
             where : {
-                user_id: req.header('user_id'),
-                team_id: req.params.team_id
+                user_id: user_id,
+                team_id: team_id
             }
         });
         // TODO: 삭제가 제대로 수행 안됐을 경우 에러 처리 추가

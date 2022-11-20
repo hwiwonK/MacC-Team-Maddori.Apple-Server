@@ -12,8 +12,11 @@ const {
     reflectionStateCheck
 } = require('../../middlewares/auth');
 
-router.post('/login', [userCheck], userLogin);
-router.post('/join-team/:team_id', [userCheck], userJoinTeam);
-router.delete('/team/:team_id/leave', [userTeamCheck], userLeaveTeam);
+// user auth 검증
+router.use('/', userCheck);
+// handler
+router.post('/login', userLogin);
+router.post('/join-team/:team_id', userJoinTeam);
+router.delete('/team/:team_id/leave', userLeaveTeam);
 
 module.exports = router;
