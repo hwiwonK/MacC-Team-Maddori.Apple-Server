@@ -234,7 +234,7 @@ const updateFeedback = async (req, res, next) => {
             { 
                 where: {
                 id: feedback_id,
-                user_id: user_id
+                from_id: user_id
             }
         })
 
@@ -281,7 +281,7 @@ const deleteFeedback = async (req, res, next) => {
         const feedbackData = await feedback.destroy({
             where: {
                 id: feedback_id,
-                user_id: user_id
+                from_id: user_id
             }
         });
         if (!feedbackData) {
