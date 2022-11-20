@@ -3,18 +3,19 @@ const secret = process.env.JWT_KEY;
 const request = require('request');
 
 // 새로운 access token 발급
-const sign = async (id) => {
+const sign = async (user_id) => {
     const payload = {
-        id: id
+        id: user_id
     };
     return jwt.sign(payload, secret, { // secret으로 sign하여 발급하고 return
-        expiresIn: '100d',       // 유효기간
+        expiresIn: '1y',       // 유효기간
         algorithm: 'HS256', // 암호화 알고리즘
     });
 }
 
 const verify = async (token) => {
     try {
+        console.log('verifying token');
         const decoded = jwt.verify(token, secret);
         return {
             type: true,
@@ -29,7 +30,7 @@ const verify = async (token) => {
 const refresh = async () => {
     try {
         return jwt.sign({}, secret, {
-            expiresIn: '200d',
+            expiresIn: '2y',
             algorithm: 'HS256',
         });
     } catch (error) {

@@ -6,22 +6,32 @@ const {user, team, userteam, reflection, feedback} = require('../../models');
 // 새로운 user 생성하기
 async function userLogin(req, res, next) {
     // console.log("유저 로그인");
-    const userContent = req.body;
+    const user_id = req.user_id;
+    const { username } = req.body;
     // TODO: username 데이터 없는 경우 에러 처리 추가
 
     try {
-        const createdUser = await user.create(userContent);
+        // const createdUser = await user.create(userContent);
+        const updatedUser = await user.update({
+            username: username,
+            where: {
+                id: user_id
+            }
+        });
+
         res.status(201).json({
             success: true,
-            message: '유저 로그인 성공',
-            detail: createdUser
+            message: '유저 닉네임 설정 성공',
+            detail: {
+                username: username
+            }
         });
 
     } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
             success: false,
-            message: '유저 로그인 실패',
+            message: '유저 닉네임 설정 실패',
             detail: error.message
         });
     }
@@ -32,7 +42,7 @@ async function userLogin(req, res, next) {
 // 유저가 팀에 합류하기
 async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
-    const user_id = req.header('user_id');
+    const user_id = req.user_id;
     const { team_id } = req.params;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 

@@ -6,13 +6,14 @@ const {
     userLeaveTeam
 } = require('./users');
 const {
+    userCheck,
     userTeamCheck,
     userAdminCheck,
     reflectionStateCheck
 } = require('../../middlewares/auth');
 
-router.post('/login', userLogin);
-router.post('/join-team/:team_id', userJoinTeam);
+router.post('/login', [userCheck], userLogin);
+router.post('/join-team/:team_id', [userCheck], userJoinTeam);
 router.delete('/team/:team_id/leave', [userTeamCheck], userLeaveTeam);
 
 module.exports = router;

@@ -34,14 +34,18 @@ const appleLogin = async (req, res, next) => {
         console.log(loginedUser);
 
         // token 생성
-        let accessToken;
-        let refreshToken;
-        await jwtUtil.sign(loginedUser.id).then((result) => {
-            accessToken = result;
-        })
-        await jwtUtil.refresh(loginedUser.id).then((result) => { // TODO: refresh token db에 저장하기
-            refreshToken = result;
-        })
+        // let accessToken;
+        // let refreshToken;
+        // await jwtUtil.sign(loginedUser.id).then((result) => {
+        //     accessToken = result;
+        // })
+        // await jwtUtil.refresh(loginedUser.id).then((result) => { // TODO: refresh token db에 저장하기
+        //     refreshToken = result;
+        // })
+
+        const accessToken = await jwtUtil.sign(loginedUser.id);
+        const refreshToken = await jwtUtil.refresh(loginedUser.id);
+
         
         // 이미 있는 user일 경우
         if (created === false) {
@@ -80,7 +84,7 @@ const appleLogin = async (req, res, next) => {
         // TODO: 에러 처리 수정
         res.status(500).json({
             success: false,
-            message: '로그인 처리 실패',
+            message: '유저 로그인 실패',
             detail: error.message
         });
     }

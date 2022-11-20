@@ -1,6 +1,38 @@
-// const { NOW } = require('sequelize');
 const { Op } = require('sequelize')
+const jwtUtil = require('../utils/jwt.util');
 const {user, team, userteam, reflection, feedback, sequelize} = require('../models');
+const secret = process.env.JWT_KEY;
+
+// 유저 정보 검증하기
+const userCheck = async (req, res, next) => {
+    try {
+        console.log('유저 검증 시작');
+        // accessToken 유효한지 검증, 유효하다면 user_id 값 가져오기
+        const accessToken = req.header('access_token');
+        console.log('access token');
+        console.log(accessToken);
+        let user_id;
+        await jwtUtil.verify(accessToken).then((error, decoded) => {
+            if (error) {
+                throw Error('access_token이 유효하지 않음');
+            }
+            user_id = decoded.id;
+        });
+        console.log('user_id');
+        console.log(user_id);
+        // 다음 미들웨어 or 핸들러로 user_id 값 넘겨주기
+        req.user_id = user_id;
+        next();
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '유저 검증 실패',
+            detail: error.message
+        })
+    }
+
+}
 
 const userTeamCheck = async (req, res, next) => {
     try {
@@ -126,6 +158,7 @@ const reflectionStateCheck = (requiredState) => {
 }
 
 module.exports = {
+    userCheck,
     userTeamCheck,
     userAdminCheck,
     reflectionTimeCheck,
