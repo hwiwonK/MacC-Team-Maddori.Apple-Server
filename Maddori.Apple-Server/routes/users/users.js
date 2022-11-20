@@ -11,9 +11,9 @@ async function userLogin(req, res, next) {
     // TODO: username 데이터 없는 경우 에러 처리 추가
 
     try {
-        // const createdUser = await user.create(userContent);
         const updatedUser = await user.update({
             username: username,
+        },{
             where: {
                 id: user_id
             }

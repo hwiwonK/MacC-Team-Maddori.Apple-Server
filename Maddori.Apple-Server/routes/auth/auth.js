@@ -15,7 +15,6 @@ const appleLogin = async (req, res, next) => {
     
         // 이미 있는 user인지 확인하기
         const [loginedUser, created] = await user.findOrCreate({
-            // attributes: ['id', 'username', 'userteam.team_id'],
             where: {
                 sub: sub,
                 email: email
@@ -31,21 +30,9 @@ const appleLogin = async (req, res, next) => {
             raw: true
         });
 
-        console.log(loginedUser);
-
         // token 생성
-        // let accessToken;
-        // let refreshToken;
-        // await jwtUtil.sign(loginedUser.id).then((result) => {
-        //     accessToken = result;
-        // })
-        // await jwtUtil.refresh(loginedUser.id).then((result) => { // TODO: refresh token db에 저장하기
-        //     refreshToken = result;
-        // })
-
         const accessToken = await jwtUtil.sign(loginedUser.id);
         const refreshToken = await jwtUtil.refresh(loginedUser.id);
-
         
         // 이미 있는 user일 경우
         if (created === false) {
@@ -57,7 +44,6 @@ const appleLogin = async (req, res, next) => {
                     access_token: accessToken,
                     refresh_token: refreshToken,
                     user: {
-                        // id: loginedUser.id,
                         username: loginedUser.username ?? null,
                         team_id: loginedUser['userteams.team_id'] ?? null    
                     }

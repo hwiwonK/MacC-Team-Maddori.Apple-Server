@@ -15,14 +15,17 @@ const sign = async (user_id) => {
 
 const verify = async (token) => {
     try {
-        console.log('verifying token');
-        const decoded = jwt.verify(token, secret);
+        // console.log('verifying token');
+        const decoded = jwt.verify(token, secret, {algorithm: 'RS256'});
         return {
             type: true,
-            id: decoded.id,
+            decoded: decoded,
         }
     } catch (error) {
-        return error; 
+        return {
+            type: false,
+            message: error.message
+        }      
     }
 }
 
@@ -34,7 +37,10 @@ const refresh = async () => {
             algorithm: 'HS256',
         });
     } catch (error) {
-        return error; 
+        return {
+            type: false,
+            message: error.message
+        }   
     }
 }
 
@@ -45,11 +51,13 @@ const decode = async (token) => {
             console.log(typeof(body));
             const publicKey = JSON.parse(body).keys;
             console.log(publicKey);
-        });
-        
+        }); 
 
     } catch (error) {
-        return error; 
+        return {
+            type: false,
+            message: error.message
+        }   
     }
 }
 
