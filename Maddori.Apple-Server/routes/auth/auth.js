@@ -3,15 +3,39 @@ const jwtUtil = require('../../utils/jwt.util');
 const jwt = require('jsonwebtoken');
 // const request = require('request'); // TODO: 추후 적용
 
+// request data: authorization code, identity token
+// response data: access_token, refresh_token, user 정보
+// apple social login을 진행하고, 토큰을 발급한다.
 const appleLogin = async (req, res, next) => {
-    // code : authorization code, token : identity token
     // TODO : authorization code 받아오기 (apple 공식키 사용 token 생성 전환시 사용)
     const { token } = req.body;
-    console.log('로그인 요청');
+    // console.log('로그인 요청');
     try {
         // TODO : 알맞은 공개키 찾아 decoding에 적용하기
-        // identity token 값에서 user 정보 가져오기
-        const { email, sub, ...others } = jwt.decode(token);
+        // identity token 검증 위한 공개키 생성하기
+        let publicKeyPem;
+        await jwtUtil.generateKey(token).then((result) => {
+            if (result.type === false) {
+                // console.log(result.message);
+                throw Error('identity token 검증 실패');
+            }
+            publicKeyPem = result.key;
+        });
+
+        // console.log('public key 생성 완료');
+        // console.log(publicKeyPem);
+
+        // identity token 검증 및 identity token 값에서 user 정보 가져오기
+        let decoded;
+        await jwtUtil.verify(token, publicKeyPem).then((result) => {
+            // console.log('verifying 시작');
+            if (result.type === false) {
+                // console.log(result.message);
+                throw Error('identity token 검증 실패');
+            }
+            decoded = result.decoded;
+        });
+        const { email, sub, ...others } = decoded;
     
         // 이미 있는 user인지 확인하기
         const [loginedUser, created] = await user.findOrCreate({

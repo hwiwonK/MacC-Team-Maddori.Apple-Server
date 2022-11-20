@@ -7,13 +7,13 @@ const secret = process.env.JWT_KEY;
 // 유저 정보 검증하기
 const userCheck = async (req, res, next) => {
     try {
-        console.log('유저 검증 시작');
+        // console.log('유저 검증 시작');
         // accessToken 유효한지 검증, 유효하다면 user_id 값 가져오기
         const accessToken = req.header('access_token').replace(/"/g, ''); // 따옴표 제거
         let user_id;
-        await jwtUtil.verify(accessToken).then((result) => {
+        await jwtUtil.verify(accessToken, secret).then((result) => {
             if (result.type === false) {
-                console.log(result.message);
+                // console.log(result.message);
                 throw Error('access_token이 유효하지 않음');
             }
             user_id = result.decoded.id;
