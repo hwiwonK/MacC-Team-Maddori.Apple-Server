@@ -13,7 +13,7 @@ const development = {
         // useUTC: false, // for reading from database
     },
     port: env.DB_PORT || "3306",
-    // timezone: "+09:00" //local에서는 이게 있어야 제대로 동작함
+    timezone: "+09:00"
 };
 
 module.exports = { development };
