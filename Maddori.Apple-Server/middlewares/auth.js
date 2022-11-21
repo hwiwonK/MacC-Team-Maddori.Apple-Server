@@ -104,6 +104,12 @@ const reflectionStateCheck = (requiredState) => {
                 reflection_id = currentReflectionId.current_reflection_id;
             }
 
+            // reflection_id가 recent일 경우 검증 pass
+            if (reflection_id === 'recent') {
+                next();
+                return;
+            }
+
             // 회고의 상태 구하기
             const reflectionState = await reflection.findOne({
                 where: {
