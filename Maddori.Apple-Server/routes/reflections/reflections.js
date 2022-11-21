@@ -101,7 +101,8 @@ const getPastReflectionList = async (req, res, next) => {
     try {
         const reflectionData = await reflection.findAll({
             where: {
-                team_id 
+                team_id: team_id,
+                state: "Done"
             }
         });
         return res.status(200).json({

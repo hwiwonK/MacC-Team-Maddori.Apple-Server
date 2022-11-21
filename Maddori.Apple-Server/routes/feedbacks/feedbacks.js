@@ -164,7 +164,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 
         // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
         const feedbacksToCertainMember = await feedback.findAll({
-            attributes: ['type', 'keyword', 'content', 'start_content'],
+            attributes: ['id', 'type', 'keyword', 'content', 'start_content'],
             where: {
                 reflection_id: currentReflection.current_reflection_id,
                 from_id: user_id,
@@ -251,7 +251,8 @@ const updateFeedback = async (req, res, next) => {
                         model: reflection,
                     },
                     {
-                        model: user
+                        model: user,
+                        as: 'to_user'
                     }]
             });
 
