@@ -81,9 +81,9 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                         as: 'from_user'
                     }
                 ]
-            })  
+            }) 
 
-            if(!feedbackData) {
+            if(!!feedbackData) {
                 return res.status(400).json({
                     success: false,
                     message: "최근 회고가 존재하지 않습니다."
@@ -224,6 +224,15 @@ const updateFeedback = async (req, res, next) => {
             })
         };
 
+        const checkFeedbackData = await feedback.findByPk(feedback_id);
+
+        if (checkFeedbackData === null) {
+            return res.status(400).json({
+                success: false,
+                'message': '피드백 정보가 없습니다.'
+            })
+        }
+
         const updatedFeedbackData = await feedback.update(
             {
               type: type,
@@ -235,15 +244,8 @@ const updateFeedback = async (req, res, next) => {
                 where: {
                 id: feedback_id,
                 from_id: user_id
-            }
+            },
         })
-
-        if (!updatedFeedbackData) {
-            return res.status(400).json({
-                'success': false,
-                'message': '업데이트 할 피드백 정보가 없습니다.'
-            });
-        };
 
         const resultFeedbackData = await feedback.findByPk(feedback_id,
             {
@@ -251,7 +253,8 @@ const updateFeedback = async (req, res, next) => {
                         model: reflection,
                     },
                     {
-                        model: user
+                        model: user,
+                        as: 'to_user'
                     }]
             });
 
@@ -284,6 +287,7 @@ const deleteFeedback = async (req, res, next) => {
                 from_id: user_id
             }
         });
+
         if (!feedbackData) {
             return res.status(400).json({
                 'success': false,
