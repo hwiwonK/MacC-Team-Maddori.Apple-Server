@@ -13,8 +13,7 @@ const userCheck = async (req, res, next) => {
         let user_id;
         await jwtUtil.verify(accessToken, secret).then((result) => {
             if (result.type === false) {
-                // console.log(result.message);
-                throw Error('access_token이 유효하지 않음');
+                throw Error(result.message);
             }
             user_id = result.decoded.id;
         });

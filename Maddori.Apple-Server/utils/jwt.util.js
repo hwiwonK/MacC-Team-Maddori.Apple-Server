@@ -14,9 +14,9 @@ const sign = async (user_id) => {
     });
 }
 
+// token 검증
 const verify = async (token, key) => {
     try {
-        // console.log('verifying token');
         const decoded = jwt.verify(token, key);
         return {
             type: true,
@@ -32,17 +32,10 @@ const verify = async (token, key) => {
 
 // 새로운 refresh token 발급
 const refresh = async () => {
-    try {
-        return jwt.sign({}, secret, {
-            expiresIn: '10y',
-            algorithm: 'HS256',
-        });
-    } catch (error) {
-        return {
-            type: false,
-            message: error.message
-        }   
-    }
+    return jwt.sign({}, secret, {
+        expiresIn: '10y',
+        algorithm: 'HS256',
+    });
 }
 
 // reference: https://stackoverflow.com/questions/38428027/why-await-is-not-working-for-node-request-module
@@ -59,13 +52,14 @@ function doRequest(url) {
     });
 }
 
-// token decode 하기
+// identity token decode위한 public key 만들기
 const generateKey = async (token) => {
     try {
         // 공개키 리스트 가져오기
         let response = await doRequest('https://appleid.apple.com/auth/keys');
         const publicKeyList = JSON.parse(response).keys;
-        // token을 검증할 공개키 구하기
+
+        // identity token의 header값을 이용해 token을 검증할 공개키 JWK 선택
         const tokenHeader = JSON.parse(Buffer.from(token.split('.')[0], 'base64').toString());
         let publicKeyObject;
         for (let key of publicKeyList) {
@@ -73,6 +67,7 @@ const generateKey = async (token) => {
                 publicKeyObject = key;
             }
         }
+        // 공개키 생성
         const publicKey = crypto.createPublicKey({
             key: publicKeyObject, format: 'jwk'
         });
