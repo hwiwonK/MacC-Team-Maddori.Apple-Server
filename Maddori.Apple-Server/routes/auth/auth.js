@@ -14,7 +14,12 @@ const appleLogin = async (req, res, next) => {
         let publicKeyPem;
         await jwtUtil.generateKey(token).then((result) => {
             if (result.type === false) {
-                throw Error('public key 생성 실패');
+                // public key 생성 오류는 서버 에러로 처리
+                res.status(500).json({
+                    success: false,
+                    message: '유저 로그인 실패',
+                    detail: '서버 오류'
+                })
             }
             publicKeyPem = result.key;
         });
