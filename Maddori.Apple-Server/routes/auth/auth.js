@@ -26,6 +26,7 @@ const appleLogin = async (req, res, next) => {
 
         // 공개키를 사용한 identity token 검증 및 identity token 값에서 user 정보 가져오기
         let decoded;
+        console.log(jwt.decode(token));
         await jwtUtil.verify(token, publicKeyPem).then((result) => {
             if (result.type === false) {
                 throw Error(result.message);
@@ -38,7 +39,6 @@ const appleLogin = async (req, res, next) => {
         const [loginedUser, created] = await user.findOrCreate({
             where: {
                 sub: sub,
-                email: email
             },
             defaults: {
                 sub: sub,
@@ -50,6 +50,17 @@ const appleLogin = async (req, res, next) => {
             },
             raw: true
         });
+
+        // 이미 있는 유저였고, 유저의 이메일이 변경되었다면 이메일 업데이트
+        if (loginedUser.email !== email) {
+            const updatedUser = await user.update({
+                email: email,
+            }, {
+                where: {
+                    sub: sub
+                }
+            });
+        }
 
         // token 생성
         const accessToken = await jwtUtil.sign(loginedUser.id);
