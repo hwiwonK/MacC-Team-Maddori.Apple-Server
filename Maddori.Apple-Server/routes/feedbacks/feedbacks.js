@@ -27,6 +27,9 @@ async function createFeedback(req, res, next) {
         });
         if (!toUserteam) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
 
+        // 받는 user가 본인인지 검증
+        if (user_id === to_id) throw Error('본인에게는 피드백을 작성할 수 없음');
+
         if (!(type === 'Continue' || type === 'Stop')) {
             return res.status(400).json({
                 'success': false,
