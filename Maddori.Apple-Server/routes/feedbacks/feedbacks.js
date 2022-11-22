@@ -1,5 +1,6 @@
-const {user, team, reflection, feedback } = require('../../models');
+const {user, team, userteam, reflection, feedback } = require('../../models');
 const { Op } = require("sequelize");
+const { userTeamCheck } = require('../../middlewares/auth');
 
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
@@ -23,6 +24,16 @@ async function createFeedback(req, res, next) {
         const { team_id, reflection_id } = req.params;
         const { type, keyword, content, start_content, to_id } = req.body;
 
+        // 받는 user가 team에 속하는지 검증
+        const toUserteam = await userteam.findOne({
+            where: {
+                user_id: to_id,
+                team_id: team_id
+            }
+        });
+        if (!toUserteam) {
+            throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+        }
 
         // 피드백 등록
         const createdFeedback = await feedback.create({
