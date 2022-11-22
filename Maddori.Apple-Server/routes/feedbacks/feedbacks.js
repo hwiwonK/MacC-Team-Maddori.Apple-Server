@@ -11,12 +11,6 @@ async function createFeedback(req, res, next) {
     const feedbackContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
-    if (!(type === 'Continue' || type === 'Stop')) {
-        return res.status(400).json({
-            'success': false,
-            'message': '피드백의 타입정보 오류'
-        })
-    }
     
     try {
         // 입력 받기
@@ -31,8 +25,13 @@ async function createFeedback(req, res, next) {
                 team_id: team_id
             }
         });
-        if (!toUserteam) {
-            throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+        if (!toUserteam) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+
+        if (!(type === 'Continue' || type === 'Stop')) {
+            return res.status(400).json({
+                'success': false,
+                'message': '피드백의 타입정보 오류'
+            });
         }
 
         // 피드백 등록
