@@ -65,6 +65,8 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
         if (reflection_id === 'recent') {
             const teamData = await team.findByPk(team_id)
             const recentReflectionId = teamData.recent_reflection_id;
+            if (!recentReflectionId) throw Error('최근 회고가 존재하지 않습니다');
+
             const feedbackData = await feedback.findAll({
                 where: {
                     team_id: team_id,
@@ -82,13 +84,6 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                     }
                 ]
             }) 
-
-            if(!!feedbackData) {
-                return res.status(400).json({
-                    success: false,
-                    message: "최근 회고가 존재하지 않습니다."
-                })
-            }
         
             return res.status(200).json({
                 'success': true,
