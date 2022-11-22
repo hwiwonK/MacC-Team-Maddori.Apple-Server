@@ -10,12 +10,6 @@ async function createFeedback(req, res, next) {
     const feedbackContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
-    if (!(type === 'Continue' || type === 'Stop')) {
-        return res.status(400).json({
-            'success': false,
-            'message': '피드백의 타입정보 오류'
-        })
-    }
     
     try {
         // 입력 받기
@@ -23,6 +17,12 @@ async function createFeedback(req, res, next) {
         const { team_id, reflection_id } = req.params;
         const { type, keyword, content, start_content, to_id } = req.body;
 
+        if (!(type === 'Continue' || type === 'Stop')) {
+            return res.status(400).json({
+                'success': false,
+                'message': '피드백의 타입정보 오류'
+            });
+        }
 
         // 피드백 등록
         const createdFeedback = await feedback.create({
