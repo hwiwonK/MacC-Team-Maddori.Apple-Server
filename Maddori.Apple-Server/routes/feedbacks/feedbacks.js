@@ -1,6 +1,5 @@
-const {user, team, reflection, feedback } = require('../../models');
+const {user, team, userteam, reflection, feedback } = require('../../models');
 const { Op } = require("sequelize");
-
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite, start_content)
@@ -9,13 +8,24 @@ async function createFeedback(req, res, next) {
     // console.log("피드백 생성하기");
     const feedbackContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
-    // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
     
     try {
         // 입력 받기
         const user_id = req.user_id;
         const { team_id, reflection_id } = req.params;
         const { type, keyword, content, start_content, to_id } = req.body;
+
+        // 받는 user가 team에 속하는지 검증
+        const toUserteam = await userteam.findOne({
+            where: {
+                user_id: to_id,
+                team_id: team_id
+            }
+        });
+        if (!toUserteam) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+
+        // 받는 user가 본인인지 검증
+        if (user_id === to_id) throw Error('본인에게는 피드백을 작성할 수 없음');
 
         if (!(type === 'Continue' || type === 'Stop')) {
             return res.status(400).json({
@@ -150,11 +160,20 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             },
             raw: true
         });
-        // console.log(currentReflection);
 
-        // 피드백을 받는 멤버의 정보 가져오기 (받는 멤버의 정보가 없을 경우 에러 처리)
-        const membersDetail = await user.findByPk(members);
-        if (membersDetail === null) throw Error('받는 멤버의 정보를 찾을 수 없음');
+        // 받는 user가 team에 속하는지 검증
+        const membersDetail = await userteam.findOne({
+            attributes: ['id', 'user.username'],
+            where: {
+                user_id: members,
+                team_id: team_id
+            },
+            include: {
+                model: user,
+            },
+            raw: true
+        });
+        if (!membersDetail) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
 
         // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
         const feedbacksToCertainMember = await feedback.findAll({
@@ -166,7 +185,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             },
             raw: true
         });
-        
+
         // type 기준으로 그룹화하여 묶기
         const feedbacksToCertainMemberGroupByType = {
             'team_id': parseInt(team_id),
@@ -181,7 +200,6 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         }
         feedbacksToCertainMember.map((data) => {
             const { type, ...contents } = data;
-            // console.log(contents);
             feedbacksToCertainMemberGroupByType[type].push(contents);
         });
 
@@ -211,6 +229,11 @@ const updateFeedback = async (req, res, next) => {
         const { feedback_id } = req.params
         const { type, keyword, content, start_content} = req.body;
 
+        // 피드백을 작성한 유저가 요청을 보낸 유저가 아닐 경우 에러 반환
+        const checkFeedbackDataFromUser = await feedback.findByPk(feedback_id);
+        if (checkFeedbackDataFromUser.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 수정 권한 없음');
+
+        // 피드백 타입 오류에 대한 에러 반환
         if (!(type === 'Continue' || type === 'Stop')) {
             return res.status(400).json({
                 'success': false,
@@ -218,52 +241,41 @@ const updateFeedback = async (req, res, next) => {
             })
         };
 
-        const checkFeedbackData = await feedback.findByPk(feedback_id);
-
-        if (checkFeedbackData === null) {
-            return res.status(400).json({
-                success: false,
-                'message': '피드백 정보가 없습니다.'
-            })
-        }
-
-        const updatedFeedbackData = await feedback.update(
-            {
-              type: type,
-              keyword: keyword,
-              content: content,
-              start_content: start_content
-            },
-            { 
-                where: {
+        // 피드백 업데이트 수행
+        const updatedFeedbackData = await feedback.update({
+            type: type,
+            keyword: keyword,
+            content: content,
+            start_content: start_content
+        },{ 
+            where: {
                 id: feedback_id,
-                from_id: user_id
             },
-        })
+        });
 
         const resultFeedbackData = await feedback.findByPk(feedback_id,
-            {
-                include: [{
-                        model: reflection,
-                    },
-                    {
-                        model: user,
-                        as: 'to_user'
-                    }]
-            });
+        {
+            include: [{
+                    model: reflection,
+                },
+                {
+                    model: user,
+                    as: 'to_user'
+                }]
+        });
 
         return res.status(200).json({
             'success': true,
             'message': '피드백 정보 수정 성공',
             'detail': {
                 'feedback': resultFeedbackData
-            }})
+            }});
         } catch (error) {
             return res.status(400).json({
-                    'success': false,
-                    'message': '피드백 정보 수정 실패',
-                    'detail': error.message
-                })
+                'success': false,
+                'message': '피드백 정보 수정 실패',
+                'detail': error.message
+            });
         }
     
 }
@@ -274,6 +286,10 @@ const deleteFeedback = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const { feedback_id } = req.params;
+
+        // 피드백을 작성한 유저가 요청을 보낸 유저가 아닐 경우 에러 반환
+        const checkFeedbackDataFromUser = await feedback.findByPk(feedback_id);
+        if (checkFeedbackDataFromUser.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 삭제 권한 없음');
 
         const feedbackData = await feedback.destroy({
             where: {
