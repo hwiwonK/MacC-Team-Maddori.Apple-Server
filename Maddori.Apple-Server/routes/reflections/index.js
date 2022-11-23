@@ -7,6 +7,7 @@ const {
     getPastReflectionList
 } = require('./reflections');
 const {
+    userCheck,
     userTeamCheck,
     userAdminCheck,
     reflectionTimeCheck,
@@ -14,6 +15,9 @@ const {
     teamReflectionRelationCheck
 } = require('../../middlewares/auth');
 
+// user auth 검증
+router.use('/', userCheck);
+// handler
 router.patch('/:reflection_id/end', [userTeamCheck, userAdminCheck, teamReflectionRelationCheck, reflectionStateCheck('Progressing')], endInProgressReflection);
 router.get('/', [userTeamCheck], getPastReflectionList);
 router.get('/current', [userTeamCheck, reflectionTimeCheck], getCurrentReflectionDetail);
