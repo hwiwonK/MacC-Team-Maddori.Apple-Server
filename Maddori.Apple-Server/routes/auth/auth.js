@@ -15,7 +15,7 @@ const appleLogin = async (req, res, next) => {
         await jwtUtil.generateKey(token).then((result) => {
             if (result.type === false) {
                 // public key 생성 오류는 서버 에러로 처리
-                res.status(500).json({
+                return res.status(500).json({
                     success: false,
                     message: '유저 로그인 실패',
                     detail: '서버 오류'
@@ -26,7 +26,6 @@ const appleLogin = async (req, res, next) => {
 
         // 공개키를 사용한 identity token 검증 및 identity token 값에서 user 정보 가져오기
         let decoded;
-        console.log(jwt.decode(token));
         await jwtUtil.verify(token, publicKeyPem).then((result) => {
             if (result.type === false) {
                 throw Error(result.message);
@@ -77,7 +76,7 @@ const appleLogin = async (req, res, next) => {
                 }
             });
 
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: '유저 로그인 성공',
                 detail: {
@@ -98,7 +97,7 @@ const appleLogin = async (req, res, next) => {
                 refresh_token: refreshToken
             });
 
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: '유저 회원가입과 로그인 성공',
                 detail: {
