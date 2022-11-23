@@ -74,7 +74,8 @@ const reflectionTimeCheck = async (req, res, next) => {
             where: {
                 id: reflection_id,
                 team_id: team_id,
-                date: { [Op.lt]: new Date() }
+                date: { [Op.lt]: new Date() },
+                state: { [Op.ne]: 'Done'}
             },
             raw: true
         });
@@ -89,7 +90,7 @@ const reflectionTimeCheck = async (req, res, next) => {
     }
 }
 
-const reflectionStateCheck = (requiredState) => {
+const reflectionStateCheck = (requiredStateFirst, requiredStateSecond) => {
     return async (req, res, next) => {
         try {
             // console.log('회고의 상태 검증');
@@ -104,6 +105,12 @@ const reflectionStateCheck = (requiredState) => {
                 reflection_id = currentReflectionId.current_reflection_id;
             }
 
+            // reflection_id가 recent일 경우 검증 pass
+            if (reflection_id === 'recent') {
+                next();
+                return;
+            }
+
             // 회고의 상태 구하기
             const reflectionState = await reflection.findOne({
                 where: {
@@ -112,7 +119,13 @@ const reflectionStateCheck = (requiredState) => {
                 },
                 raw: true
             });
-            if (reflectionState.state !== requiredState && reflectionState.state != 'SettingRequired') throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+
+            // 목표 상태가 한 개일 때, 두 개일 때 나눠서 처리
+            if (requiredStateSecond === undefined){
+                if (reflectionState.state !== requiredStateFirst) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+            } else {
+                if (reflectionState.state !== requiredStateFirst && reflectionState.state !== requiredStateSecond) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+            }
             next();
 
         } catch (error) {
