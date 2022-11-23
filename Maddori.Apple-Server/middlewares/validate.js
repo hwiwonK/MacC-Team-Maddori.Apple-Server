@@ -12,13 +12,7 @@ const validateFeedback = async (req, res, next) => {
         }
         
         if ( keyword. length > 11 ) {
-
-        }
-
-        if (alphaPattern.test(keyword)) {
-            if (keyword.length > 15) {
-                throw Error('키워드 15글자 초과');
-            }
+            throw Error('키워드 11글자 초과')
         }
 
         next();
