@@ -138,9 +138,39 @@ const reflectionStateCheck = (requiredStateFirst, requiredStateSecond) => {
     }
 }
 
+const teamReflectionRelationCheck = async (req, res, next) => {
+    try {
+        const { team_id, reflection_id } = req.params;
+        if (reflection_id === 'current' || reflection_id === 'recent') {
+            next();
+            return
+        }
+        const teamReflection = reflection.findOne({
+            where: {
+                id: reflection_id,
+                team_id: team_id
+            }
+        });
+        if (!teamReflection) throw Error('회고가 팀에 속하지 않음');
+        next();
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: '요청 처리 불가',
+            detail: error.message
+        });
+    }
+}
+
+// const reflectionFeedbackRelationCheck = async (req, res, next) => {
+//     const { reflection_id }
+// }
+
 module.exports = {
     userTeamCheck,
     userAdminCheck,
     reflectionTimeCheck,
-    reflectionStateCheck
+    reflectionStateCheck,
+    teamReflectionRelationCheck
 }
