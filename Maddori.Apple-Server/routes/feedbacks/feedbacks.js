@@ -10,12 +10,19 @@ async function createFeedback(req, res, next) {
     const feedbackContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
     // TODO: 받는 사람이 현재 팀에 없는 경우 에러 처리
+    if (!(type === 'Continue' || type === 'Stop')) {
+        return res.status(400).json({
+            'success': false,
+            'message': '피드백의 타입정보 오류'
+        })
+    }
     
     try {
         // 입력 받기
         const user_id = req.header('user_id');
         const { team_id, reflection_id } = req.params;
         const { type, keyword, content, start_content, to_id } = req.body;
+
 
         // 피드백 등록
         const createdFeedback = await feedback.create({
@@ -74,7 +81,15 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                         as: 'from_user'
                     }
                 ]
-            })  
+            }) 
+
+            if(!!feedbackData) {
+                return res.status(400).json({
+                    success: false,
+                    message: "최근 회고가 존재하지 않습니다."
+                })
+            }
+        
             return res.status(200).json({
                 'success': true,
                 'message': '최근 회고 피드백 조회 성공',
@@ -149,7 +164,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 
         // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
         const feedbacksToCertainMember = await feedback.findAll({
-            attributes: ['id', 'type', 'keyword', 'content', 'start_content'],
+            attributes: ['id','type', 'keyword', 'content', 'start_content'],
             where: {
                 reflection_id: currentReflection.current_reflection_id,
                 from_id: user_id,
@@ -198,8 +213,25 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 //* 특정 피드백을 수정하는 API, 현재 진행중인 회고는 수정이 불가능하다.
 const updateFeedback = async (req, res, next) => {
     try {
-        const { feedback_id } = req.params
+        const user_id = req.header('user_id');
+        const { feedback_id } = req.params;
         const { type, keyword, content, start_content} = req.body;
+
+        if (!(type === 'Continue' || type === 'Stop')) {
+            return res.status(400).json({
+                'success': false,
+                'message': '피드백의 타입정보 오류'
+            })
+        };
+
+        const checkFeedbackData = await feedback.findByPk(feedback_id);
+
+        if (checkFeedbackData === null) {
+            return res.status(400).json({
+                success: false,
+                'message': '피드백 정보가 없습니다.'
+            })
+        }
 
         const updatedFeedbackData = await feedback.update(
             {
@@ -210,8 +242,9 @@ const updateFeedback = async (req, res, next) => {
             },
             { 
                 where: {
-                id: feedback_id
-            }
+                id: feedback_id,
+                from_id: user_id
+            },
         })
 
         const resultFeedbackData = await feedback.findByPk(feedback_id,
@@ -246,12 +279,22 @@ const updateFeedback = async (req, res, next) => {
 const deleteFeedback = async (req, res, next) => {
     try {
         const { feedback_id } = req.params;
+        const user_id = req.header('user_id');
 
         const feedbackData = await feedback.destroy({
             where: {
-                id: feedback_id
+                id: feedback_id,
+                from_id: user_id
             }
         });
+
+        if (!feedbackData) {
+            return res.status(400).json({
+                'success': false,
+                'message': '삭제할 피드백 정보가 없습니다.'
+            })
+        }
+
         return res.status(200).json({
             'success': true,
             'message': '피드백 정보 삭제 성공'
@@ -271,6 +314,7 @@ const deleteFeedback = async (req, res, next) => {
 //* 회고의 특정 유저와 유저가 속한 팀의 피드백을 분류하여 조회하는 API
 const getTeamAndUserFeedback = async (req, res) => {
     const user_id = req.header('user_id');
+
 
     try {
         const member_id = req.query.members;
