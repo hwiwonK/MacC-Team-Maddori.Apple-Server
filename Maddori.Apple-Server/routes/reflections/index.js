@@ -19,5 +19,4 @@ router.get('/', [userTeamCheck], getPastReflectionList);
 router.get('/current', [userTeamCheck, reflectionTimeCheck], getCurrentReflectionDetail);
 router.patch('/:reflection_id', [userTeamCheck, userAdminCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired')], updateReflectionDetail);
 
-
 module.exports = router;
