@@ -50,7 +50,7 @@ async function getCurrentReflectionDetail(req, res, next) {
     }
 }
 
-// request data : user_id, team_id, reflection_id
+// request data : user_id, team_id, reflection_id, reflection_name, reflection_date
 // response data : reflection_id, reflection_name, date, status
 // 팀의 리더가 팀의 현재 회고에 디테일 정보(이름, 일시)를 추가한다.
 const updateReflectionDetail = async (req, res, next) => {
