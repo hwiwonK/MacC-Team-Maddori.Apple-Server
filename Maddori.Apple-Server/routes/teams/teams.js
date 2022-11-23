@@ -31,11 +31,12 @@ function checkDuplicateCode(createdTeamCode) {
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
-    const error = validationResult(req);
-    if (!error.isEmpty()) {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
         return res.status(400).json({
             success:false,
-            message:'요청이 잘못되었습니다.'
+            message: errors.array
         })
     }
     // console.log("팀 생성하기");
