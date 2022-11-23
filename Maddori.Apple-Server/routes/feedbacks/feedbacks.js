@@ -230,24 +230,17 @@ const updateFeedback = async (req, res, next) => {
         const { feedback_id } = req.params;
         const { type, keyword, content, start_content} = req.body;
 
+        // 피드백을 작성한 유저가 요청을 보낸 유저가 아닐 경우 에러 반환
+        const checkFeedbackDataFromUser = await feedback.findByPk(feedback_id);
+        if (checkFeedbackDataFromUser.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 수정 권한 없음');
+
+        // 피드백 타입 오류에 대한 에러 반환
         if (!(type === 'Continue' || type === 'Stop')) {
             return res.status(400).json({
                 'success': false,
                 'message': '피드백의 타입정보 오류'
             })
         };
-
-        // 피드백 정보 유무 검증
-        const checkFeedbackData = await feedback.findByPk(feedback_id);
-        if (checkFeedbackData === null) {
-            return res.status(400).json({
-                success: false,
-                message: '피드백 정보가 없습니다.'
-            })
-        }
-
-        // 피드백을 작성한 유저가 요청을 보낸 유저와 일치하는지 검증
-        if (checkFeedbackData.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 수정 권한 없음');
 
         // 피드백 업데이트 수행
         const updatedFeedbackData = await feedback.update({
@@ -258,7 +251,6 @@ const updateFeedback = async (req, res, next) => {
         },{ 
             where: {
                 id: feedback_id,
-                from_id: user_id
             },
         });
 
@@ -296,10 +288,14 @@ const deleteFeedback = async (req, res, next) => {
         const { feedback_id } = req.params;
         const user_id = req.header('user_id');
 
+        // 피드백을 작성한 유저가 요청을 보낸 유저가 아닐 경우 에러 반환
+        const checkFeedbackDataFromUser = await feedback.findByPk(feedback_id);
+        if (checkFeedbackDataFromUser.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 삭제 권한 없음');
+
         const feedbackData = await feedback.destroy({
             where: {
                 id: feedback_id,
-                // from_id: user_id
+                from_id: user_id
             }
         });
 
