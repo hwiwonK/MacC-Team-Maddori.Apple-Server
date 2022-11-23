@@ -12,14 +12,16 @@ const {
 const {
     userTeamCheck,
     reflectionTimeCheck,
-    reflectionStateCheck
+    reflectionStateCheck,
+    teamReflectionRelationCheck,
+    reflectionFeedbackRelationCheck
 } = require('../../middlewares/auth');
 
-router.post('/', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], createFeedback);
-router.get('/', [userTeamCheck, reflectionStateCheck('Done')], getCertainTypeFeedbackAll);
-router.put('/:feedback_id', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], updateFeedback);
-router.delete("/:feedback_id", [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], deleteFeedback);
-router.get('/from-me', [userTeamCheck, reflectionTimeCheck], getFromMeToCertainMemberFeedbackAll);
-router.get("/from-team", [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], getTeamAndUserFeedback); 
+router.post('/', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], createFeedback);
+router.get('/', [userTeamCheck, teamReflectionRelationCheck, reflectionStateCheck('Done')], getCertainTypeFeedbackAll);
+router.put('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), reflectionFeedbackRelationCheck], updateFeedback);
+router.delete('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), reflectionFeedbackRelationCheck], deleteFeedback);
+router.get('/from-me', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], getFromMeToCertainMemberFeedbackAll);
+router.get('/from-team', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], getTeamAndUserFeedback); 
 
 module.exports = router;

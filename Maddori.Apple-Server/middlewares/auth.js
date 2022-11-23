@@ -145,7 +145,7 @@ const teamReflectionRelationCheck = async (req, res, next) => {
             next();
             return
         }
-        const teamReflection = reflection.findOne({
+        const teamReflection = await reflection.findOne({
             where: {
                 id: reflection_id,
                 team_id: team_id
@@ -155,7 +155,7 @@ const teamReflectionRelationCheck = async (req, res, next) => {
         next();
 
     } catch (error) {
-        res.status(500).json({
+        res.status(400).json({
             success: false,
             message: '요청 처리 불가',
             detail: error.message
@@ -163,14 +163,37 @@ const teamReflectionRelationCheck = async (req, res, next) => {
     }
 }
 
-// const reflectionFeedbackRelationCheck = async (req, res, next) => {
-//     const { reflection_id }
-// }
+const reflectionFeedbackRelationCheck = async (req, res, next) => {
+    try {
+        const { team_id, reflection_id, feedback_id } = req.params;
+        if (reflection_id === 'current' || reflection_id === 'recent') {
+            next();
+            return
+        }
+        const reflectionFeedback = await feedback.findOne({
+            where: {
+                id: feedback_id,
+                reflection_id: reflection_id
+            }
+        });
+        if (!reflectionFeedback) throw Error('피드백이 회고에 속하지 않음');
+        next();
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '요청 처리 불가',
+            detail: error.message
+        });
+    }
+
+}
 
 module.exports = {
     userTeamCheck,
     userAdminCheck,
     reflectionTimeCheck,
     reflectionStateCheck,
-    teamReflectionRelationCheck
+    teamReflectionRelationCheck,
+    reflectionFeedbackRelationCheck
 }

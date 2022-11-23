@@ -144,7 +144,7 @@ const endInProgressReflection = async (req, res, next) => {
         const newReflectionData = await reflection.create({
             team_id: team_id
         })
-        console.log(`newReflectionData : ${newReflectionData.id}`);
+        // console.log(`newReflectionData : ${newReflectionData.id}`);
 
         const updateTeamCurrentReflectionId = await team.update(
             {
