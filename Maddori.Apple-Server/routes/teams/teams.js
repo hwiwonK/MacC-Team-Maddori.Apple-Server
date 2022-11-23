@@ -1,4 +1,5 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
+const { validationResult } = require('express-validator');
 
 // 팀 invitation_code 생성
 // reference : https://www.programiz.com/javascript/examples/generate-random-strings
@@ -30,6 +31,13 @@ function checkDuplicateCode(createdTeamCode) {
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+        return res.status(400).json({
+            success:false,
+            message:'요청이 잘못되었습니다.'
+        })
+    }
     // console.log("팀 생성하기");
     const teamContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가

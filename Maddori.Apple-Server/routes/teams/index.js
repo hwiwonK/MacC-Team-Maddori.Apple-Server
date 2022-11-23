@@ -11,8 +11,14 @@ const {
     userAdminCheck
 } = require('../../middlewares/auth');
 
+const { body } = require('express-validator');
+
 router.get('/', getCertainTeamName);
-router.post('/', createTeam);
+
+router.post('/',
+[body('team_name').isEmpty().isString().isLength({max:10})],
+createTeam);
+
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 router.get('/:team_id/members', [userTeamCheck], getTeamMembers);
 
