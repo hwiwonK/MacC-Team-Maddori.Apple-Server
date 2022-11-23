@@ -1,7 +1,5 @@
 const {user, team, userteam, reflection, feedback } = require('../../models');
 const { Op } = require("sequelize");
-const { userTeamCheck } = require('../../middlewares/auth');
-
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id, start_content)
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite, start_content)
@@ -239,8 +237,8 @@ const updateFeedback = async (req, res, next) => {
             })
         };
 
+        // 피드백 정보 유무 검증
         const checkFeedbackData = await feedback.findByPk(feedback_id);
-
         if (checkFeedbackData === null) {
             return res.status(400).json({
                 success: false,
@@ -248,6 +246,10 @@ const updateFeedback = async (req, res, next) => {
             })
         }
 
+        // 피드백을 작성한 유저가 요청을 보낸 유저와 일치하는지 검증
+        if (checkFeedbackData.from_id !== parseInt(user_id)) throw Error('타 유저가 작성한 피드백에 대한 수정 권한 없음');
+
+        // 피드백 업데이트 수행
         const updatedFeedbackData = await feedback.update({
             type: type,
             keyword: keyword,
