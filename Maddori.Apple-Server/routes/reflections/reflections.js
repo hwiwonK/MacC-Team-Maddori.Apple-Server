@@ -7,6 +7,7 @@ async function getCurrentReflectionDetail(req, res, next) {
     // console.log("현재 회고 정보 가져오기");
 
     try {
+        const user_id = req.user_id;
         // 팀의 현재 회고 id
         const currentReflectionId = await team.findByPk(req.params.team_id, {
             attributes: ['current_reflection_id'],
@@ -57,6 +58,7 @@ const updateReflectionDetail = async (req, res, next) => {
 
     try {
         // console.log('회고 정보 추가하기');
+        const user_id = req.user_id;
         const { reflection_id } = req.params;
         const { reflection_name, reflection_date } = req.body;
 
@@ -99,9 +101,10 @@ const updateReflectionDetail = async (req, res, next) => {
 //* request data: team_id
 //* response data: id, reflection_name, date, state, team_id
 const getPastReflectionList = async (req, res, next) => {
-    const { team_id } = req.params;
 
     try {
+        const user_id = req.user_id;
+        const { team_id } = req.params;
         const reflectionData = await reflection.findAll({
             where: {
                 team_id: team_id,
@@ -129,6 +132,7 @@ const getPastReflectionList = async (req, res, next) => {
 //* 특정 회고를 종료하는 API
 const endInProgressReflection = async (req, res, next) => {
     try {
+        const user_id = req.user_id;
         const { reflection_id, team_id } = req.params;
 
         await reflection.update(
@@ -146,7 +150,7 @@ const endInProgressReflection = async (req, res, next) => {
         const newReflectionData = await reflection.create({
             team_id: team_id
         })
-        console.log(`newReflectionData : ${newReflectionData.id}`);
+        // console.log(`newReflectionData : ${newReflectionData.id}`);
 
         const updateTeamCurrentReflectionId = await team.update(
             {

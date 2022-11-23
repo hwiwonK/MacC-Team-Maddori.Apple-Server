@@ -31,6 +31,7 @@ function checkDuplicateCode(createdTeamCode) {
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
     // console.log("팀 생성하기");
+    const user_id = req.user_id;
     const teamContent = req.body;
     // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
@@ -63,7 +64,7 @@ async function createTeam(req, res, next) {
 
         // 유저의 팀 합류 및 리더 설정
         const createdUserTeam = await userteam.create({
-            user_id: req.header('user_id'),
+            user_id: user_id,
             team_id: createdTeam.id,
             admin: true
         });
@@ -89,7 +90,7 @@ async function createTeam(req, res, next) {
 // 팀 코드를 통해 해당 팀의 이름을 찾는다. 일치하는 팀이 없을 경우 에러를 반환한다.
 const getCertainTeamName = async (req, res, next) => {
     try {
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { invitation_code } = req.query;
         const requestTeam = await team.findOne({
             attributes: ['id', 'team_name'],
@@ -125,7 +126,7 @@ async function getCertainTeamDetail(req, res, next) {
     // console.log("팀의 정보 가져오기");
 
     try {
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { team_id } = req.params;
 
         // 팀의 team_name, invitation_code
@@ -171,6 +172,7 @@ async function getTeamMembers(req, res, next) {
 
     try {
         // TODO : 불필요한 필드 제거 (user.username)
+        const user_id = req.user_id;
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({
             attributes: ['user_id', 'user.username'],

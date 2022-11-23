@@ -13,7 +13,7 @@ async function createFeedback(req, res, next) {
     
     try {
         // 입력 받기
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { team_id, reflection_id } = req.params;
         const { type, keyword, content, start_content, to_id } = req.body;
 
@@ -58,7 +58,7 @@ async function createFeedback(req, res, next) {
 // 만약 reflection_id 가 recent인 경우에는 가장 최근 회고에서 feedback을 불러온다.
 const getCertainTypeFeedbackAll = async (req, res, next) => {
     try {
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
         const { type } = req.query;
         const { team_id, reflection_id } = req.params;
 
@@ -132,11 +132,10 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
 // 팀의 현재 회고에 담긴 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
 const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
     // console.log('특정 멤버에게 작성한 피드백 리스트 가져오기');
-
     try {
         const { reflection_id, team_id } = req.params;
         const { members } = req.query;
-        const user_id = req.header('user_id');
+        const user_id = req.user_id;
 
         // 팀이 진행 중인 현재 회고 id 가져오기
         if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
@@ -208,8 +207,8 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 //* 특정 피드백을 수정하는 API, 현재 진행중인 회고는 수정이 불가능하다.
 const updateFeedback = async (req, res, next) => {
     try {
-        const user_id = req.header('user_id');
-        const { feedback_id } = req.params;
+        const user_id = req.user_id;
+        const { feedback_id } = req.params
         const { type, keyword, content, start_content} = req.body;
 
         if (!(type === 'Continue' || type === 'Stop')) {
@@ -273,8 +272,8 @@ const updateFeedback = async (req, res, next) => {
 //* 특정 피드백을 삭제하는 API
 const deleteFeedback = async (req, res, next) => {
     try {
+        const user_id = req.user_id;
         const { feedback_id } = req.params;
-        const user_id = req.header('user_id');
 
         const feedbackData = await feedback.destroy({
             where: {
@@ -308,9 +307,8 @@ const deleteFeedback = async (req, res, next) => {
 //* reponse data: id, type, keyword, content, start_content, from_id, to_id, team_id, reflection_id
 //* 회고의 특정 유저와 유저가 속한 팀의 피드백을 분류하여 조회하는 API
 const getTeamAndUserFeedback = async (req, res) => {
-    const user_id = req.header('user_id');
-
     try {
+        const user_id = req.user_id;
         const member_id = req.query.members;
         const { team_id, reflection_id } = req.params
 

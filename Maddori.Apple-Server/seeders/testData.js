@@ -8,19 +8,24 @@ module.exports = {
     // user table & team data
     const users = [
       {
-        username: 'Mary'
+        username: 'Mary',
+        email: 'mary@apple.com'
       },
       {
-        username: 'Ginger'
+        username: 'Ginger',
+        email: 'ginger@apple.com'
       },
       {
-        username: 'Hoya'
+        username: 'Hoya',
+        email: 'hoya@apple.com'
       },
       {
-        username: 'Chemi'
+        username: 'Chemi',
+        email: 'chemi@apple.com'
       },
       {
-        username: 'Id'
+        username: 'Id',
+        email: 'id@apple.com'
       }
     ]
     const teams = [
