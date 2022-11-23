@@ -9,8 +9,8 @@ const development = {
     dialect: "mysql",
     dialectOptions: {
         dateStrings: true,
-        typeCast: true
-        // useUTC: false, // for reading from database
+        typeCast: true,
+        useUTC: false, // for reading from database
     },
     port: env.DB_PORT || "3306",
     timezone: "+09:00"

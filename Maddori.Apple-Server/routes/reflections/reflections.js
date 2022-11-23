@@ -54,12 +54,16 @@ async function getCurrentReflectionDetail(req, res, next) {
 // response data : reflection_id, reflection_name, date, status
 // 팀의 리더가 팀의 현재 회고에 디테일 정보(이름, 일시)를 추가한다.
 const updateReflectionDetail = async (req, res, next) => {
-    // TODO: 유저가 현재 팀의 리더인지 검증(미들웨어)
-    // TODO: 회고의 status가 회고 정보를 추가할 수 있는 상태인지 검증(미들웨어)
+
     try {
         // console.log('회고 정보 추가하기');
         const { reflection_id } = req.params;
         const { reflection_name, reflection_date } = req.body;
+
+        // 회고 일정 검증 (현 시간보다 이전이면 에러 반환)
+        const curDate = new Date();
+        const reflectionDate = new Date(reflection_date);
+        if (reflectionDate <= curDate) throw Error('회고 시간이 현 시간 이전');
 
         // 피드백 상세 정보 추가
         const updateReflectionSuccess = await reflection.update({
@@ -73,7 +77,6 @@ const updateReflectionDetail = async (req, res, next) => {
         });
 
         if (updateReflectionSuccess[0] === 0) throw Error('일치하는 회고 정보를 찾지 못함');
-
         const reflectionDetail = await reflection.findByPk(reflection_id);
 
         res.status(200).json({
@@ -120,7 +123,6 @@ const getPastReflectionList = async (req, res, next) => {
         });
     }
 }
-
 
 //* request data: reflection_id, team_id
 //* response data: id, reflection_name, date, state, team_id
@@ -169,9 +171,7 @@ const endInProgressReflection = async (req, res, next) => {
             message: error.message
         })
     }
-    
 }
-
 
 module.exports = {
     getCurrentReflectionDetail,
