@@ -16,9 +16,19 @@ const {
     reflectionStateCheck
 } = require('../../middlewares/auth');
 
-router.post('/', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], createFeedback);
+const {
+    validateFeedback
+} = require('../../middlewares/validate');
+
+const { checkSchema } = require('express-validator');
+
+// 피드백 생성 API
+router.post('/', 
+[validateFeedback, userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], 
+createFeedback);
+
 router.get('/', [userTeamCheck], getCertainTypeFeedbackAll);
-router.put('/:feedback_id', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], updateFeedback);
+router.put('/:feedback_id', [validateFeedback, userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], updateFeedback);
 router.delete("/:feedback_id", [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('Before')], deleteFeedback);
 router.get('/from-me', [userTeamCheck, reflectionTimeCheck], getFromMeToCertainMemberFeedbackAll);
 router.get("/from-team", [userTeamCheck, reflectionStateCheck('Progressing')], getTeamAndUserFeedback); 
