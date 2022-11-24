@@ -21,10 +21,9 @@ router.post('/',
 body('team_name').not().isEmpty(),
 body('team_name').isString(),
 body('team_name').custom((value) => {
-    const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/
-    // const pattern = /\p{Extended_Pictographic}/u;
-    if (!!pattern.test(value)) {
-        console.log(pattern.test(value));
+    const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
+    const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
+    if (!!pattern.test(value) || !!pattern2.test(value)) {
         throw new Error('특수문자가 들어갔습니다.');
     }
     return true;
