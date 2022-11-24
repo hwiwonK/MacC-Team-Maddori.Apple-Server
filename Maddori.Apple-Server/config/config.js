@@ -10,7 +10,6 @@ const development = {
     dialectOptions: {
         dateStrings: true,
         typeCast: true,
-        useUTC: false, // for reading from database
     },
     port: env.DB_PORT || "3306",
     timezone: "+09:00"
