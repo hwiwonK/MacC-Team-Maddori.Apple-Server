@@ -35,8 +35,9 @@ async function createTeam(req, res, next) {
     console.log(errors);
     if (!errors.isEmpty()) {
         return res.status(400).json({
-            success:false,
-            message: '잘못된 요청'
+            success: false,
+            message: '입력 값의 형식이 잘못됨',
+            detail: errors.array()
         })
     }
     // console.log("팀 생성하기");

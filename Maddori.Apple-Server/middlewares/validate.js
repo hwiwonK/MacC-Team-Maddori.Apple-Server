@@ -20,7 +20,8 @@ const validateFeedback = async (req, res, next) => {
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: error.message
+            message: '입력 값의 형식이 잘못됨',
+            detail: error.message
         })
     }
 }
