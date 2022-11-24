@@ -12,25 +12,15 @@ const {
     userTeamCheck,
     userAdminCheck
 } = require('../../middlewares/auth');
+const {
+    validateTeamname
+} = require('../../middlewares/validate');
 
 // user auth 검증
 router.use('/', userCheck);
 // handler
 router.get('/', getCertainTeamName);
-router.post('/',
-body('team_name').not().isEmpty(),
-body('team_name').isString(),
-body('team_name').custom((value) => {
-    const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
-    const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
-    if (!!pattern.test(value) || !!pattern2.test(value)) {
-        throw new Error('특수문자가 들어갔습니다.');
-    }
-    return true;
-}),
-body('team_name').isLength({max:10}),
-createTeam);
-
+router.post('/', [validateTeamname], createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 router.get('/:team_id/members', [userTeamCheck], getTeamMembers);
 

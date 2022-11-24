@@ -67,7 +67,36 @@ const validateUsername = [
     }
 ]
 
+const validateTeamname = [
+    body('team_name')
+        .not().isEmpty()
+        .withMessage('team_name 값이 비어있음')
+        .isString()
+        .withMessage('team_name은 문자열 형식이어야 함')
+        .isLength({ max:10 })
+        .withMessage('team_name 글자 수 제한(10글자) 초과')
+        .custom((value) => {
+            const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
+            const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
+            return !(!!pattern.test(value) || !!pattern2.test(value));
+        })
+        .withMessage('team_name은 특수문자를 포함할 수 없습니다'),
+    
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: '입력 값의 형식이 잘못됨',
+                detail: errors.array()[0].msg
+            })
+        }
+        next();
+    }  
+]
+
 module.exports = {
     validateFeedback,
-    validateUsername
+    validateUsername,
+    validateTeamname
 }
