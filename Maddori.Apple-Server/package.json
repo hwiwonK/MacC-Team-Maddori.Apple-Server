@@ -22,7 +22,9 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
+    "request": "^2.88.2",
     "sequelize": "^6.25.3",
     "sequelize-cli": "^6.5.1"
   },

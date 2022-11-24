@@ -27,6 +27,14 @@ module.exports = function(sequelize, DataTypes){
                 },
                 onDelete: 'CASCADE',
                 hooks: true
+            }),
+            user.hasOne(models.usertoken, {
+                foreignKey: {
+                    name: 'user_id',
+                    allowNull: false
+                },
+                onDelete: 'CASCADE',
+                hooks: true
             })
         }
     }
@@ -42,7 +50,17 @@ module.exports = function(sequelize, DataTypes){
             username: {
                 field: "username",
                 type: DataTypes.STRING(6),
-                allowNull: false
+                allowNull: true
+            },
+            email: {
+                field: "email",
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            sub: {
+                field: "sub",
+                type: DataTypes.STRING,
+                allowNull: true
             }
         }, {
             sequelize,

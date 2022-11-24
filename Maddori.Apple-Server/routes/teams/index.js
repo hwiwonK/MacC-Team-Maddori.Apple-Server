@@ -1,5 +1,6 @@
 const express = require('express');
 const router = new express.Router({ mergeParams: true });
+const { body } = require('express-validator');
 const {
     createTeam,
     getCertainTeamName,
@@ -7,14 +8,15 @@ const {
     getTeamMembers
 } = require('./teams');
 const {
+    userCheck,
     userTeamCheck,
     userAdminCheck
 } = require('../../middlewares/auth');
 
-const { body } = require('express-validator');
-
+// user auth 검증
+router.use('/', userCheck);
+// handler
 router.get('/', getCertainTeamName);
-
 router.post('/',
 body('team_name').not().isEmpty(),
 body('team_name').isString(),
