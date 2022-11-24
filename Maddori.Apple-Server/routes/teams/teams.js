@@ -175,20 +175,21 @@ async function getTeamMembers(req, res, next) {
         const user_id = req.user_id;
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({
-            attributes: ['user_id', 'user.username'],
+            attributes: ['user.id', 'user.username'],
             where: {
                 team_id: req.params.team_id
             },
             include: { 
                 model: user,
-                attributes: ['username'],
+                attributes: ['id', 'username'],
                 required: true 
             },
             raw: true
         });
+        console.log(teamMemberList);
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
-        teamMemberList.map((data) => (delete data['user.username']));
+        teamMemberList.map((data) => (delete data['user.username'], delete data['user.id']));
         const teamMemberInformation = {
             members: teamMemberList
         }
