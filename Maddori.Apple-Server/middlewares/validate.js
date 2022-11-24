@@ -6,8 +6,8 @@ const validateFeedback = [
         .withMessage('keyword 값이 비어있음')
         .isString()
         .withMessage('keyword는 문자열 형식이어야 함')
-        .isLength({ max: 11 })
-        .withMessage('keyword 글자 수 제한(11글자) 초과'),
+        .isLength({ max: 10 })
+        .withMessage('keyword 글자 수 제한(10글자) 초과'),
     body('content')
         .not().isEmpty()
         .withMessage('content 값이 비어있음')
@@ -95,8 +95,31 @@ const validateTeamname = [
     }  
 ]
 
+const validateReflectionname = [
+    body('reflection_name')
+        .not().isEmpty()
+        .withMessage('reflection_name 값이 비어있음')
+        .isString()
+        .withMessage('reflection_name은 문자열 형식이어야 함')
+        .isLength({ max: 15 })
+        .withMessage('reflection_name 글자 수 제한(15글자) 초과'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: '입력 값의 형식이 잘못됨',
+                detail: errors.array()[0].msg
+            })
+        }
+        next();
+    }  
+]
+
 module.exports = {
     validateFeedback,
     validateUsername,
-    validateTeamname
+    validateTeamname,
+    validateReflectionname
 }
