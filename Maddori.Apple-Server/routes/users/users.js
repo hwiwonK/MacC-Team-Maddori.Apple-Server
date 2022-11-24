@@ -8,7 +8,6 @@ async function userLogin(req, res, next) {
     // console.log("유저 로그인");
     const user_id = req.user_id;
     const { username } = req.body;
-    // TODO: username 데이터 없는 경우 에러 처리 추가
 
     try {
         const updatedUser = await user.update({
@@ -44,7 +43,6 @@ async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
     const user_id = req.user_id;
     const { team_id } = req.params;
-    // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
         // team 정보 유효한지 체크
@@ -94,8 +92,7 @@ async function userLeaveTeam(req, res, next) {
                 team_id: team_id
             }
         });
-        // TODO: 삭제가 제대로 수행 안됐을 경우 에러 처리 추가
-        // TODO: 삭제할 데이터가 없을 경우 에러 처리 추가
+        
         if (deletedUserTeam === 1) { // 삭제할 데이터 있음
             res.status(200).json({
                 success: true,

@@ -184,7 +184,7 @@ async function getTeamMembers(req, res, next) {
             },
             raw: true
         });
-        console.log(teamMemberList);
+        // console.log(teamMemberList);
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
         teamMemberList.map((data) => (delete data['user.username'], delete data['user.id']));
