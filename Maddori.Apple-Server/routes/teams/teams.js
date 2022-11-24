@@ -31,19 +31,8 @@ function checkDuplicateCode(createdTeamCode) {
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
-    const errors = validationResult(req);
-    console.log(errors);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            success: false,
-            message: '입력 값의 형식이 잘못됨',
-            detail: errors.array()
-        })
-    }
-    // console.log("팀 생성하기");
     const user_id = req.user_id;
     const teamContent = req.body;
-    // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
         // 생성된 팀 코드가 중복되지 않을 때까지 반복
@@ -181,7 +170,6 @@ async function getTeamMembers(req, res, next) {
     // console.log("팀 멤버 목록 가져오기");
 
     try {
-        // TODO : 불필요한 필드 제거 (user.username)
         const user_id = req.user_id;
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({

@@ -1,25 +1,37 @@
+const { text } = require('express');
 const { body, validationResult } = require('express-validator');
 
+// 글자 수 제한 값
+const textLimit = {
+    feedbackKeywordLimit: 10,
+    feedbackContentLimit: 200,
+    feedbackStartContentLimit: 200,
+    usernameLimit: 6,
+    teamNameLimit: 10,
+    reflectionNameLimit: 15
+}
+
+// 피드백 keyword, content, start_content 형식 검증 (글자 수 제한)
 const validateFeedback = [
     body('keyword')
         .not().isEmpty()
         .withMessage('keyword 값이 비어있음')
         .isString()
         .withMessage('keyword는 문자열 형식이어야 함')
-        .isLength({ max: 10 })
-        .withMessage('keyword 글자 수 제한(10글자) 초과'),
+        .isLength({ max: textLimit.feedbackKeywordLimit })
+        .withMessage(`keyword 글자 수 제한(${textLimit.feedbackKeywordLimit}자) 초과`),
     body('content')
         .not().isEmpty()
         .withMessage('content 값이 비어있음')
         .isString()
         .withMessage('content는 문자열 형식이어야 함')
-        .isLength({ max: 200 })
-        .withMessage('keyword 글자 수 제한(200글자) 초과'),
+        .isLength({ max: textLimit.feedbackContentLimit })
+        .withMessage(`content 글자 수 제한(${textLimit.feedbackContentLimit}자) 초과`),
     body('start_content')
         .isString()
         .withMessage('start_content는 문자열 형식이어야 함')
-        .isLength({ max: 200 })
-        .withMessage('start_content 글자 수 제한(200글자) 초과'),
+        .isLength({ max: textLimit.feedbackStartContentLimit })
+        .withMessage(`start_content 글자 수 제한(${textLimit.feedbackStartContentLimit}자) 초과`),
     
     (req, res, next) => {
         const errors = validationResult(req);
@@ -34,15 +46,15 @@ const validateFeedback = [
     }
 ]
 
-// username 형식 검증 (최대 6글자, 영어/한국어 가능, 특수문자 불가능, 띄어쓰기 불가능)
+// username 형식 검증 (글자 수 제한, 특수문자 불가능, 띄어쓰기 불가능)
 const validateUsername = [
     body('username')
         .not().isEmpty()
         .withMessage('username 값이 비어있음')
         .isString()
         .withMessage('username은 문자열 형식이어야 함')
-        .isLength({ max: 6 })
-        .withMessage('username 글자 수 제한(6글자) 초과')
+        .isLength({ max: textLimit.usernameLimit })
+        .withMessage(`username 글자 수 제한(${textLimit.usernameLimit}자) 초과`)
         .custom((value) => {
             const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
             const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
@@ -67,14 +79,15 @@ const validateUsername = [
     }
 ]
 
+// team_name 형식 검증 (글자 수 제한, 특수문자 불가능)
 const validateTeamname = [
     body('team_name')
         .not().isEmpty()
         .withMessage('team_name 값이 비어있음')
         .isString()
         .withMessage('team_name은 문자열 형식이어야 함')
-        .isLength({ max:10 })
-        .withMessage('team_name 글자 수 제한(10글자) 초과')
+        .isLength({ max: textLimit.teamNameLimit })
+        .withMessage(`team_name 글자 수 제한(${textLimit.teamNameLimit}자) 초과`)
         .custom((value) => {
             const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
             const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
@@ -95,14 +108,15 @@ const validateTeamname = [
     }  
 ]
 
+// reflection_name 형식 검증 (글자 수 제한)
 const validateReflectionname = [
     body('reflection_name')
         .not().isEmpty()
         .withMessage('reflection_name 값이 비어있음')
         .isString()
         .withMessage('reflection_name은 문자열 형식이어야 함')
-        .isLength({ max: 15 })
-        .withMessage('reflection_name 글자 수 제한(15글자) 초과'),
+        .isLength({ max: textLimit.reflectionNameLimit })
+        .withMessage(`reflection_name 글자 수 제한(${textLimit.reflectionNameLimit}글자) 초과`),
 
     (req, res, next) => {
         const errors = validationResult(req);
