@@ -21,7 +21,8 @@ router.post('/',
 body('team_name').not().isEmpty(),
 body('team_name').isString(),
 body('team_name').custom((value) => {
-    const pattern = /[~!@#\#$%<>^&*]/
+    const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/
+    // const pattern = /\p{Extended_Pictographic}/u;
     if (!!pattern.test(value)) {
         console.log(pattern.test(value));
         throw new Error('특수문자가 들어갔습니다.');
