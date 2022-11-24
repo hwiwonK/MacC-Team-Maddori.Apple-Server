@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 // response data: access_token, refresh_token, user 정보
 // apple social login을 진행하고, 토큰을 발급한다.
 const appleLogin = async (req, res, next) => {
-    // TODO : authorization code 받아오기 (apple 공식키 사용 token 생성 전환시 사용)
     const { token } = req.body;
 
     try {

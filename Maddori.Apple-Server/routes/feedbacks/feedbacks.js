@@ -7,7 +7,6 @@ const { Op } = require("sequelize");
 async function createFeedback(req, res, next) {
     // console.log("피드백 생성하기");
     const feedbackContent = req.body;
-    // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
     
     try {
         // 입력 받기
@@ -27,6 +26,7 @@ async function createFeedback(req, res, next) {
         // 받는 user가 본인인지 검증
         if (user_id === to_id) throw Error('본인에게는 피드백을 작성할 수 없음');
 
+        // type 검증
         if (!(type === 'Continue' || type === 'Stop')) {
             return res.status(400).json({
                 'success': false,

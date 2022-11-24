@@ -1,4 +1,5 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
+const { validationResult } = require('express-validator');
 
 // 팀 invitation_code 생성
 // reference : https://www.programiz.com/javascript/examples/generate-random-strings
@@ -30,10 +31,8 @@ function checkDuplicateCode(createdTeamCode) {
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
-    // console.log("팀 생성하기");
     const user_id = req.user_id;
     const teamContent = req.body;
-    // TODO: 데이터 형식 맞지 않는 경우 에러 처리 추가
 
     try {
         // 생성된 팀 코드가 중복되지 않을 때까지 반복
@@ -171,7 +170,6 @@ async function getTeamMembers(req, res, next) {
     // console.log("팀 멤버 목록 가져오기");
 
     try {
-        // TODO : 불필요한 필드 제거 (user.username)
         const user_id = req.user_id;
         // 멤버 목록 가져오기
         const teamMemberList = await userteam.findAll({
@@ -186,7 +184,7 @@ async function getTeamMembers(req, res, next) {
             },
             raw: true
         });
-        console.log(teamMemberList);
+        // console.log(teamMemberList);
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
         teamMemberList.map((data) => (delete data['user.username'], delete data['user.id']));
