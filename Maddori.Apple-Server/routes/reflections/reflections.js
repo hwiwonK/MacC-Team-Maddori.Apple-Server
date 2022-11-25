@@ -149,22 +149,27 @@ const endInProgressReflection = async (req, res, next) => {
                     }
             })
         const data = await reflection.findByPk(reflection_id);
-
+        
+        // 새로운 회고 생성 및 team의 현재 회고 id 업데이트
         const newReflectionData = await reflection.create({
             team_id: team_id
         })
-        // console.log(`newReflectionData : ${newReflectionData.id}`);
-
-        const updateTeamCurrentReflectionId = await team.update(
-            {
-                current_reflection_id: newReflectionData.id
-            },
-            {
-                where: {
-                    id: team_id
-                }
-            });
-
+        await team.update({
+            current_reflection_id: newReflectionData.id
+        },{
+            where: {
+                id: team_id
+            }
+        });
+        // team의 최근 회고 id 업데이트
+        await team.update({
+            recent_reflection_id: reflection_id
+        },{
+            where: {
+                id: team_id
+            }
+        });
+        
         return res.status(200).json({
             success: true,
             message: "회고 종료 성공",
