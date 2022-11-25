@@ -120,7 +120,7 @@ const reflectionTimeCheck = async (req, res, next) => {
     }
 }
 
-const reflectionStateCheck = (requiredStateFirst, requiredStateSecond) => {
+const reflectionStateCheck = (...requiredStates) => {
     return async (req, res, next) => {
         try {
             // console.log('회고의 상태 검증');
@@ -150,13 +150,14 @@ const reflectionStateCheck = (requiredStateFirst, requiredStateSecond) => {
                 raw: true
             });
 
-            // 목표 상태가 한 개일 때, 두 개일 때 나눠서 처리
-            if (requiredStateSecond === undefined){
-                if (reflectionState.state !== requiredStateFirst) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
-            } else {
-                if (reflectionState.state !== requiredStateFirst && reflectionState.state !== requiredStateSecond) throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`);
+            // parameter로 온 모든 상태에 대해 검증 (상태 일치한다면 다음 핸들러 진행, 모두 일치하지 않는다면 에러 반환)
+            for (const state of requiredStates) {
+                if (reflectionState.state === state) {
+                    next();
+                    return;
+                }
             }
-            next();
+            throw Error(`현재 회고의 상태 ${reflectionState.state}에 요청을 수행할 수 없음`)
 
         } catch (error) {
             res.status(400).json({

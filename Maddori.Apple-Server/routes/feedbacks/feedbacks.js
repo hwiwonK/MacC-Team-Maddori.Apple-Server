@@ -146,7 +146,6 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         const { reflection_id, team_id } = req.params;
         const { members } = req.query;
         const user_id = req.user_id;
-
         // 팀이 진행 중인 현재 회고 id 가져오기
         if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
         const currentReflectionId = await team.findByPk(team_id, {
