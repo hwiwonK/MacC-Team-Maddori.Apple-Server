@@ -83,6 +83,7 @@ const appleLogin = async (req, res, next) => {
                     access_token: accessToken,
                     refresh_token: refreshToken,
                     user: {
+                        user_id: loginedUser.id,
                         username: loginedUser.username ?? null,
                         team_id: loginedUser['userteams.team_id'] ?? null    
                     }
@@ -104,6 +105,7 @@ const appleLogin = async (req, res, next) => {
                     access_token: accessToken,
                     refresh_token: refreshToken,
                     user: {
+                        user_id: loginedUser.id,
                         username: null,
                         team_id: null    
                     }
