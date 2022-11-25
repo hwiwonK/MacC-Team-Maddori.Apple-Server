@@ -23,6 +23,9 @@ async function getCurrentReflectionDetail(req, res, next) {
             where: {
                 reflection_id: currentReflectionId.current_reflection_id
             },
+            order: [
+                ['id', 'DESC']
+            ],
             raw : true
         });
         
