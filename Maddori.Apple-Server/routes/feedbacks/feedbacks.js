@@ -90,11 +90,11 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                     },
                     {
                         model: user,
+                        attributes: ['id', 'username'],
                         as: 'from_user'
                     }
                 ]
             }) 
-        
             return res.status(200).json({
                 'success': true,
                 'message': '최근 회고 피드백 조회 성공',
@@ -116,6 +116,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                 },
                 {
                     model: user,
+                    attributes: ['id', 'username'],
                     as: 'from_user'
                 }
             ]
@@ -254,6 +255,7 @@ const updateFeedback = async (req, res, next) => {
                 },
                 {
                     model: user,
+                    attributes: ['id', 'username'],
                     as: 'to_user'
                 }]
         });
