@@ -28,7 +28,7 @@ router.post('/', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeChec
 router.get('/', [userTeamCheck, teamReflectionRelationCheck, reflectionStateCheck('Done')], getCertainTypeFeedbackAll);
 router.put('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), reflectionFeedbackRelationCheck, validateFeedback], updateFeedback);
 router.delete('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), reflectionFeedbackRelationCheck], deleteFeedback);
-router.get('/from-me', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before')], getFromMeToCertainMemberFeedbackAll);
+router.get('/from-me', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before', 'Progressing')], getFromMeToCertainMemberFeedbackAll);
 router.get('/from-team', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], getTeamAndUserFeedback);
 
 module.exports = router;
