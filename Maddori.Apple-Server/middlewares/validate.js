@@ -29,6 +29,7 @@ const validateFeedback = [
         .withMessage(`content 글자 수 제한(${textLimit.feedbackContentLimit}자) 초과`),
     body('start_content')
         .isString()
+        .optional({ nullable: true })
         .withMessage('start_content는 문자열 형식이어야 함')
         .isLength({ max: textLimit.feedbackStartContentLimit })
         .withMessage(`start_content 글자 수 제한(${textLimit.feedbackStartContentLimit}자) 초과`),

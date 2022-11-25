@@ -149,17 +149,12 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 
         // 팀이 진행 중인 현재 회고 id 가져오기
         if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
-        const currentReflection = await team.findByPk(team_id, {
-            attributes: ['current_reflection_id', 'reflection.reflection_name', 'reflection.state'],
-            include: {
-                model: reflection,
-                as: 'reflection',
-            },
-            where: {
-                current_reflection_id: reflection.id
-            },
+        const currentReflectionId = await team.findByPk(team_id, {
+            attributes: ['current_reflection_id'],
             raw: true
         });
+        // 현재 회고 정보 가져오기
+        const currentReflection = await reflection.findByPk(currentReflectionId.current_reflection_id);
 
         // 받는 user가 team에 속하는지 검증
         const membersDetail = await userteam.findOne({
@@ -179,7 +174,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         const feedbacksToCertainMember = await feedback.findAll({
             attributes: ['id','type', 'keyword', 'content', 'start_content'],
             where: {
-                reflection_id: currentReflection.current_reflection_id,
+                reflection_id: currentReflection.id,
                 from_id: user_id,
                 to_id: members
             },
@@ -189,7 +184,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
         // type 기준으로 그룹화하여 묶기
         const feedbacksToCertainMemberGroupByType = {
             'team_id': parseInt(team_id),
-            'reflection_id': currentReflection.current_reflection_id,
+            'reflection_id': currentReflection.id,
             'reflection_name' : currentReflection.reflection_name,
             'reflection_status' : currentReflection.state,
             'from_id': parseInt(user_id),
