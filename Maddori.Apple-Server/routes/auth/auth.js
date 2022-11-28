@@ -123,6 +123,36 @@ const appleLogin = async (req, res, next) => {
     }
 }
 
+const signOut = async (req, res, next) => {
+    // console.log('회원 탈퇴 시작');
+    try {
+        const user_id = req.user_id;
+
+        // 유저 정보 삭제하기
+        const deletedUser = await user.destroy({
+            where: {
+                id: user_id
+            }
+        });
+        // 삭제할 유저 정보가 없을 경우 에러 반환
+        if (!deletedUser) throw Error('삭제할 유저 정보가 없습니다');
+
+        return res.status(200).json({
+            'success': true,
+            'message': '유저 정보 삭제 성공'
+        })
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '유저 정보 삭제 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
-    appleLogin
+    appleLogin,
+    signOut
 }
