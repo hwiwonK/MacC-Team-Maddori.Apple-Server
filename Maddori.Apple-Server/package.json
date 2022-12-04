@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "production.start": "pm2 start ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,13 @@
   "homepage": "https://github.com/hwiwonK/MacC-Team-Maddori.Apple-Server#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.3",
+    "request": "^2.88.2",
+    "sequelize": "^6.25.3",
+    "sequelize-cli": "^6.5.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
