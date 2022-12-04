@@ -4,14 +4,13 @@ const { body, validationResult } = require('express-validator');
 // 글자 수 제한 값
 const textLimit = {
     feedbackKeywordLimit: 10,
-    feedbackContentLimit: 200,
-    feedbackStartContentLimit: 200,
+    feedbackContentLimit: 400,
     usernameLimit: 6,
     teamNameLimit: 10,
     reflectionNameLimit: 15
 }
 
-// 피드백 keyword, content, start_content 형식 검증 (글자 수 제한)
+// 피드백 keyword, content 형식 검증 (글자 수 제한)
 const validateFeedback = [
     body('keyword')
         .not().isEmpty()
