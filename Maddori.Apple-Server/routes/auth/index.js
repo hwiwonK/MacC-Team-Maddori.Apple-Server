@@ -11,6 +11,6 @@ const {
 } = require('./auth');
 
 router.post('/', appleLogin);
-router.delete('/signout', [userCheck], signOut);
+router.delete('/signOut', [userCheck], signOut);
 
 module.exports = router;
