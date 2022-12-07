@@ -18,7 +18,7 @@ const {
 // user auth 검증
 router.use('/', userCheck);
 // handler
-router.post('/login', [validateUsername], userLogin);
+router.post('/nickName', [validateUsername], userLogin);
 router.post('/join-team/:team_id', userJoinTeam);
 router.delete('/team/:team_id/leave', userLeaveTeam);
 
