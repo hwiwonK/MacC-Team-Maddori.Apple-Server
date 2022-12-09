@@ -63,13 +63,8 @@ module.exports = function(sequelize, DataTypes){
             },
             content: {
                 field: "content",
-                type: DataTypes.STRING(200),
-                allowNull: true
-            },
-            start_content: {
-                field: "start_content",
-                type: DataTypes.STRING(200),
-                allowNull: true
+                type: DataTypes.STRING(400),
+                allowNull: false
             }
         }, {
             sequelize,
