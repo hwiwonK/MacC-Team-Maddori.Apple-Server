@@ -69,8 +69,7 @@ const updateReflectionDetail = async (req, res, next) => {
         const curDateWithSecond = new Date();
         const curDate = new Date(curDateWithSecond.setSeconds(0, 0));
         const reflectionDate = new Date(reflection_date);
-        console.log(curDate);
-        console.log(reflectionDate);
+
         if (reflectionDate < curDate) throw Error('회고 시간이 현 시간 이전');
         // 피드백 상세 정보 추가
         const updateReflectionSuccess = await reflection.update({
