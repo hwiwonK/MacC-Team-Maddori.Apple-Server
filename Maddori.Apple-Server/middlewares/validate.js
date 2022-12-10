@@ -4,7 +4,7 @@ const { body, validationResult } = require('express-validator');
 // 글자 수 제한 값
 const textLimit = {
     feedbackKeywordLimit: 10,
-    feedbackContentLimit: 200,
+    feedbackContentLimit: 400,
     feedbackStartContentLimit: 200,
     usernameLimit: 6,
     teamNameLimit: 10,
