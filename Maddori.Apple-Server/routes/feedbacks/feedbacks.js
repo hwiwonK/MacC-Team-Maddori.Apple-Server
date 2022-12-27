@@ -1,10 +1,13 @@
 const {user, team, userteam, reflection, feedback } = require('../../models');
 const { Op } = require("sequelize");
+const sc = require('../../constants/statusCode');
+const m = require('../../constants/responseMessage');
+const { success, fail } = require('../../constants/response');
 
 // request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id)
 // response data : feedback information(type, keyword, content, from_id, to_id, is_favorite)
 // 회고에 새로운 피드백을 등록한다 
-async function createFeedback(req, res, next) {
+const createFeedback = async (req, res) => {
     // console.log("피드백 생성하기");
     const feedbackContent = req.body;
     
@@ -28,10 +31,7 @@ async function createFeedback(req, res, next) {
 
         // type 검증
         if (!(type === 'Continue' || type === 'Stop')) {
-            return res.status(400).json({
-                'success': false,
-                'message': '피드백의 타입정보 오류'
-            });
+            return res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST,m.FEEDBACK_TYPE_ERROR))
         }
 
         // 피드백 등록
@@ -44,21 +44,13 @@ async function createFeedback(req, res, next) {
             team_id: parseInt(team_id),
             reflection_id: parseInt(reflection_id)
         });
+        res.status(sc.CREATED).send(success(sc.CREATED, m.CREATE_FEEDBACK_SUCCESS, createdFeedback));
 
-        res.status(201).json({
-            success: true,
-            message: '피드백 생성하기 성공',
-            detail: createdFeedback
-        });
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '피드백 생성하기 실패',
-            detail: error.message
-        });
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.CREATE_FEEDBACK_FAIL));
     }
 }
+
 
 // request data: team_id, reflection_id, type
 // response data: id, type, keyword, content, from_id, to_id, 
@@ -94,13 +86,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                     }
                 ]
             }) 
-            return res.status(200).json({
-                'success': true,
-                'message': '최근 회고 피드백 조회 성공',
-                'detail': {
-                    'feedback': feedbackData
-                }
-            });         
+            return res.status(sc.OK).send(success(sc.OK, m.GET_RECENT_FEEDBACK_SUCCESS, {'feedback': feedbackData}));
         }
         const feedbackData = await feedback.findAll({
             where: {
@@ -120,19 +106,9 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                 }
             ]
         })
-        return res.status(200).json({
-            'success': true,
-            'message': '피드백 정보 조회 성공',
-            'detail': {
-                'feedback': feedbackData
-            }
-        });
+        return res.status(sc.OK).send(success(sc.OK, m.CREATE_FEEDBACK_SUCCESS, {'feedback':feedbackData}));
     } catch (error) {
-        return res.status(400).json({
-            'success': false,
-            'message': '피드백 정보 조회 실패',
-            'detail': error.message
-        })
+        return res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.GET_FEEDBACK_FAIL));
     }
 }
 
@@ -167,7 +143,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             },
             raw: true
         });
-        if (!membersDetail) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+        if (!membersDetail) throw Error(m.NOT_INCLUDED_USER);
 
         // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
         const feedbacksToCertainMember = await feedback.findAll({
@@ -196,20 +172,11 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
             const { type, ...contents } = data;
             feedbacksToCertainMemberGroupByType[type].push(contents);
         });
-
-        res.status(200).json({
-            success: true,
-            message: '특정 멤버에게 작성한 피드백 목록 가져오기 성공',
-            detail: feedbacksToCertainMemberGroupByType
-        });
+        res.status(sc.OK).send(success(sc.OK, m.GET_FEEDBACK_LIST_TO_SPECIFIC_MEMBER_SUCCESS, feedbacksToCertainMemberGroupByType));
 
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '특정 멤버에게 작성한 피드백 목록 가져오기 실패',
-            detail: error.message
-        });
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.GET_FEEDBACK_LIST_TO_SPECIFIC_MEMBER_FAIL));
     }
 }
 
@@ -229,7 +196,7 @@ const updateFeedback = async (req, res, next) => {
 
         // 피드백 타입 오류에 대한 에러 반환
         if (!(type === 'Continue' || type === 'Stop')) {
-            return res.status(400).json({
+            return res.status(sc.BAD_REQUEST).json({
                 'success': false,
                 'message': '피드백의 타입정보 오류'
             })
@@ -257,19 +224,9 @@ const updateFeedback = async (req, res, next) => {
                     as: 'to_user'
                 }]
         });
-
-        return res.status(200).json({
-            'success': true,
-            'message': '피드백 정보 수정 성공',
-            'detail': {
-                'feedback': resultFeedbackData
-            }});
+        return res.status(sc.OK).send(success(sc.OK, m.UPDATE_FEEDBACK_SUCCESS, {'feedback':resultFeedbackData}))
         } catch (error) {
-            return res.status(400).json({
-                'success': false,
-                'message': '피드백 정보 수정 실패',
-                'detail': error.message
-            });
+            return res.status(sc.BAD_REQUEST).send(sc.BAD_REQUEST, m.UPDATE_FEEDBACK_FAIL);
         }
     
 }
@@ -293,22 +250,13 @@ const deleteFeedback = async (req, res, next) => {
         });
 
         if (!feedbackData) {
-            return res.status(400).json({
-                'success': false,
-                'message': '삭제할 피드백 정보가 없습니다.'
-            })
+            return res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.DELETE_FEEDBACK_FAIL));
         }
+        res.status(sc.OK).send(success(sc.OK, m.DELETE_FEEDBACK_SUCCESS));
 
-        return res.status(200).json({
-            'success': true,
-            'message': '피드백 정보 삭제 성공'
-        })
     } catch (error) {
-        return res.status(400).json({
-            'success': false,
-            'message': '피드백 정보 삭제 실패',
-            'detail': error.message
-        })
+        console.log(error)
+        res.status(sc.BAD_REQUEST).send(sc.BAD_REQUEST, m.DELETE_FEEDBACK_FAIL);
     }
 }
 
@@ -359,22 +307,18 @@ const getTeamAndUserFeedback = async (req, res) => {
     if (user_id.toString() !== member_id.toString()) { 
        category = 'others';
     }
-    
-    return res.status(200).json({
-        success: true,
-        message: "피드백 조회 성공",
-        detail: {
-            category: category,
-            user_feedback: userFeedbackData,
-            team_feedback: teamFeedbackData 
-        }
-    })
+
+    const responseData = {
+        category: category,
+        user_feedback: userFeedbackData,
+        team_feedback: teamFeedbackData
+    }
+
+    return res.status(sc.OK).send(success(sc.OK,m.OK, responseData));
+
     } catch (error) {
-        return res.status(400).json({
-            success: true,
-            message: "피드백 조회 실패",
-            detail: error.message
-        })
+        console.log(error);
+        return res.status(sc.BAD_REQUEST).send(sc.BAD_REQUEST, m.GET_FEEDBACK_FAIL);
     }
     
 };
