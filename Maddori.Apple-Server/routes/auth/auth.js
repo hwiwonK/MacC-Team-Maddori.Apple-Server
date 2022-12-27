@@ -1,11 +1,14 @@
 const {user, team, userteam, reflection, feedback, usertoken } = require('../../models');
 const jwtUtil = require('../../utils/jwt.util');
 const jwt = require('jsonwebtoken');
+const sc = require('../../constants/statusCode');
+const m = require('../../constants/responseMessage');
+const { success, fail } = require('../../constants/response');
 
 // request data: identity token
 // response data: access_token, refresh_token, user 정보
 // apple social login을 진행하고, 토큰을 발급한다.
-const appleLogin = async (req, res, next) => {
+const appleLogin = async (req, res) => {
     const { token } = req.body;
 
     try {
@@ -14,10 +17,10 @@ const appleLogin = async (req, res, next) => {
         await jwtUtil.generateKey(token).then((result) => {
             if (result.type === false) {
                 // public key 생성 오류는 서버 에러로 처리
-                return res.status(500).json({
+                return res.status(sc.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    message: '유저 로그인 실패',
-                    detail: '서버 오류'
+                    message: m.SIGN_IN_FAIL,
+                    detail: m.INTERNAL_SERVER_ERROR
                 })
             }
             publicKeyPem = result.key;
@@ -75,9 +78,9 @@ const appleLogin = async (req, res, next) => {
                 }
             });
 
-            return res.status(200).json({
+            return res.status(sc.OK).json({
                 success: true,
-                message: '유저 로그인 성공',
+                message: m.SIGN_IN_SUCCESS,
                 detail: {
                     created: false,
                     access_token: accessToken,
@@ -97,9 +100,9 @@ const appleLogin = async (req, res, next) => {
                 refresh_token: refreshToken
             });
 
-            return res.status(200).json({
+            return res.status(sc.OK).json({
                 success: true,
-                message: '유저 회원가입과 로그인 성공',
+                message: m.SIGN_UP_SUCCESS,
                 detail: {
                     created: true,
                     access_token: accessToken,
@@ -115,9 +118,9 @@ const appleLogin = async (req, res, next) => {
 
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json({
+        res.status(sc.BAD_REQUEST).json({
             success: false,
-            message: '유저 로그인 실패',
+            message: m.SIGN_IN_FAIL,
             detail: error.message
         });
     }
@@ -137,16 +140,16 @@ const signOut = async (req, res, next) => {
         // 삭제할 유저 정보가 없을 경우 에러 반환
         if (!deletedUser) throw Error('삭제할 유저 정보가 없습니다');
 
-        return res.status(200).json({
+        return res.status(sc.OK).json({
             'success': true,
-            'message': '유저 정보 삭제 성공'
+            'message': m.DELETE_USER_SUCCESS
         })
 
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json({
+        res.status(sc.BAD_REQUEST).json({
             success: false,
-            message: '유저 정보 삭제 실패',
+            message: m.DELETE_USER_FAIL,
             detail: error.message
         });
     }
