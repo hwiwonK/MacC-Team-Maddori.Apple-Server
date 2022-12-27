@@ -356,7 +356,7 @@ const getTeamAndUserFeedback = async (req, res) => {
 
     let category = 'self';
     
-    if (user_id !== member_id) { 
+    if (user_id.toString() !== member_id.toString()) { 
        category = 'others';
     }
     
