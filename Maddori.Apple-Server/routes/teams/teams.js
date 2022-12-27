@@ -1,5 +1,8 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
 const { validationResult } = require('express-validator');
+const sc = require('../../constants/statusCode');
+const m = require('../../constants/responseMessage');
+const { success, fail } = require('../../constants/response');
 
 // 팀 invitation_code 생성
 // reference : https://www.programiz.com/javascript/examples/generate-random-strings
@@ -30,7 +33,7 @@ function checkDuplicateCode(createdTeamCode) {
 // request data : user_id, team_name
 // response data : team_id, team_name, team_code 
 // 유저가 팀 생성하기 (팀의 코드 생성, 해당 유저는 팀에 합류 후 팀의 admin으로 설정, 팀의 첫번째 회고 자동 생성)
-async function createTeam(req, res, next) {
+const createTeam = async (req, res) => {
     const user_id = req.user_id;
     const teamContent = req.body;
 
@@ -68,26 +71,18 @@ async function createTeam(req, res, next) {
             admin: true
         });
         
-        res.status(201).json({
-            success: true,
-            message: '팀 생성 완료, 유저를 해당 팀의 리더로 설정',
-            detail: createdTeam
-        });
+        res.status(sc.CREATED).send(success(m.CREATE_TEAM_SUCCESS_APPOINT_TEAM_LEADER, createTeam));
 
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '팀 생성 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.CREATE_TEAM_FAIL));
     }
 }
 
 // request data : user_id, team_code
 // response date : team_id, team_name
 // 팀 코드를 통해 해당 팀의 이름을 찾는다. 일치하는 팀이 없을 경우 에러를 반환한다.
-const getCertainTeamName = async (req, res, next) => {
+const getCertainTeamName = async (req, res) => {
     try {
         const user_id = req.user_id;
         const { invitation_code } = req.query;
@@ -100,28 +95,20 @@ const getCertainTeamName = async (req, res, next) => {
         });
         // 초대 코드가 일치하는 팀이 없을 경우
         if (requestTeam === null) {
-            throw Error('초대 코드가 잘못됨');
+            throw Error(m.INVALID_INVITATION_CODE);
         }
-        res.status(200).json({
-            success: true,
-            message: '팀 정보 가져오기 성공',
-            detail: requestTeam
-        });
+        res.status(sc.OK).send(success(sc.OK,m.GET_TEAM_INFO_SUCCESS, requestTeam));
 
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '팀 정보 가져오기 실패',
-            detail: error.message
-        });
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST.m.GET_TEAM_INFO_FAIL));
     }
 } 
 
 // request data : user_id, team_id
 // response data : team_id, team_name, invitation_code, admin
 // 팀의 정보 가져오기
-async function getCertainTeamDetail(req, res, next) {
+const getCertainTeamDetail = async (req, res) => {
     // console.log("팀의 정보 가져오기");
 
     try {
@@ -146,28 +133,19 @@ async function getCertainTeamDetail(req, res, next) {
             invitation_code: teamBasicInformation.invitation_code,
             admin: teamLeader.admin === 0 ? false : true
         }
+        res.status(sc.OK).send(success(sc.OK, m.GET_TEAM_INFO_SUCCESS, teamFinalInformation));
 
-        res.status(200).json({
-            success: true,
-            message: '유저가 속한 팀의 정보 가져오기 성공',
-            detail: teamFinalInformation
-        });
 
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '유저가 속한 팀의 정보 가져오기 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.GET_TEAM_INFO_FAIL));
     }
 }
 
 // request data : user_id, team_id
 // response data : [user_id, username]
 // 팀에 속한 유저(멤버) 목록 가져오기
-async function getTeamMembers(req, res, next) {
-    // console.log("팀 멤버 목록 가져오기");
+const getTeamMembers = async (req, res) => {
 
     try {
         const user_id = req.user_id;
@@ -184,27 +162,18 @@ async function getTeamMembers(req, res, next) {
             },
             raw: true
         });
-        // console.log(teamMemberList);
         if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
 
         teamMemberList.map((data) => (delete data['user.username'], delete data['user.id']));
         const teamMemberInformation = {
             members: teamMemberList
         }
+        res.status(sc.OK).send(success(sc.OK, m.GET_TEAM_MEMBER_LIST_SUCCESS, teamMemberInformation));
 
-        res.status(200).json({
-            success: true,
-            message: '팀의 멤버 목록 가져오기 성공',
-            detail: teamMemberInformation
-        });
 
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '팀의 멤버 목록 가져오기 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.GET_TEAM_MEMBER_LIST_FAIL));
     }
 }
 
