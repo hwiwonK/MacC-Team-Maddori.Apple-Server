@@ -1,10 +1,13 @@
 const {user, team, userteam, reflection, feedback} = require('../../models');
+const sc = require('../../constants/statusCode');
+const m = require('../../constants/responseMessage');
+const { success, fail } = require('../../constants/response');
 
 // TODO : social login, token 생성 방식으로 변경
 // request data : username
 // response data : user_id, username
 // 새로운 user 생성하기
-async function userLogin(req, res, next) {
+const userLogin = async (req, res) => {
     // console.log("유저 로그인");
     const user_id = req.user_id;
     const { username } = req.body;
@@ -18,9 +21,9 @@ async function userLogin(req, res, next) {
             }
         });
 
-        res.status(201).json({
+        res.status(sc.CREATED).json({
             success: true,
-            message: '유저 닉네임 설정 성공',
+            message: m.SET_USER_NICKNAME_SUCCESS,
             detail: {
                 username: username
             }
@@ -28,9 +31,9 @@ async function userLogin(req, res, next) {
 
     } catch (error) {
         // TODO: 에러 처리 수정
-        res.status(400).json({
+        res.status(sc.BAD_REQUEST).json({
             success: false,
-            message: '유저 닉네임 설정 실패',
+            message: m.SET_USER_NICKNAME_FAIL,
             detail: error.message
         });
     }
@@ -39,7 +42,7 @@ async function userLogin(req, res, next) {
 // request data : user_id, team_id
 // response data : userteam_id, user_id, team_id
 // 유저가 팀에 합류하기
-async function userJoinTeam(req, res, next) {
+const userJoinTeam = async (req, res) => {
     // console.log("유저 팀 조인");
     const user_id = req.user_id;
     const { team_id } = req.params;
@@ -62,26 +65,17 @@ async function userJoinTeam(req, res, next) {
         });
 
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
-        res.status(201).json({
-            success: true,
-            message: '유저 팀 합류 성공',
-            detail: createdUserteam
-        });
-
+        res.status(sc.CREATED).send(success(sc.CREATED, m.JOIN_TEAM_SUCCESS, createdUserteam));
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '유저 팀 합류 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(success(sc.BAD_REQUEST, m.JOIN_TEAM_FAIL));
     }
 }
 
 // request data : user_id, team_id
 // response data : 결과 처리 여부
 // 유저가 팀을 탈퇴하기
-async function userLeaveTeam(req, res, next) {
+const userLeaveTeam = async (req, res) => {
     
     try {
         const user_id = req.user_id;
@@ -94,24 +88,13 @@ async function userLeaveTeam(req, res, next) {
         });
         
         if (deletedUserTeam === 1) { // 삭제할 데이터 있음
-            res.status(200).json({
-                success: true,
-                message: '유저 팀 탈퇴 성공'
-            });
+            res.status(sc.OK).send(success(sc.OK, m.WITHDRAW_TEAM_SUCCESS));
         } else { // 삭제할 데이터 없음
-            res.status(400).json({
-                success: false,
-                message: '유저 팀 탈퇴 실패',
-                detail: '유저와 팀 정보가 잘못됨'
-            });
+            res.status(sc.OK).send(fail(sc.BAD_REQUEST, m.WITHDRAW_TEAM_FAIL));
         }
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '유저 팀 탈퇴 실패',
-            detail: error.message
-        });
+        console.log(error)
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.WITHDRAW_TEAM_FAIL));
     }
 }
 
