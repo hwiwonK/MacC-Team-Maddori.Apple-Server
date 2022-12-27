@@ -1,10 +1,12 @@
 const {user, team, reflection, feedback} = require('../../models');
+const sc = require('../../constants/statusCode');
+const m = require('../../constants/responseMessage');
+const { success, fail } = require('../../constants/response');
 
 // request data : user_id, team_id
 // response data : current_reflection_id, reflection_name, date, status, 회고에 속한 keywords 목록
 // 팀에서 진행하는 현재의 회고 정보 가져오기
-async function getCurrentReflectionDetail(req, res, next) {
-    // console.log("현재 회고 정보 가져오기");
+const getCurrentReflectionDetail = async (req, res) => {
 
     try {
         const user_id = req.user_id;
@@ -37,20 +39,12 @@ async function getCurrentReflectionDetail(req, res, next) {
             reflection_status: reflectionInformation.state,
             reflection_keywords: keywordsList.map((data) => data.keyword)
         }
+        res.status(sc.OK).send(success(sc.OK, m.GET_REFLECTION_SUCCESS, reflectionFinalInformation));
 
-        res.status(200).json({
-            success: true,
-            message: '현재 회고 정보 가져오기 성공',
-            detail: reflectionFinalInformation
-        });
 
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '현재 회고 정보 가져오기 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(sc.BAD_REQUEST, m.GET_REFLECTION_FAIL);
     }
 }
 
@@ -83,20 +77,11 @@ const updateReflectionDetail = async (req, res, next) => {
 
         if (updateReflectionSuccess[0] === 0) throw Error('일치하는 회고 정보를 찾지 못함');
         const reflectionDetail = await reflection.findByPk(reflection_id);
-
-        res.status(200).json({
-            success: true,
-            message: '회고 디테일 정보 추가 성공',
-            detail: reflectionDetail
-        });
+        res.status(sc.OK).send(success(sc.OK, m.UPDATE_REFLECTION_DETAIL_SUCCESS, reflectionDetail));
 
     } catch (error) {
-        // TODO: 에러 처리 수정
-        res.status(400).json({
-            success: false,
-            message: '회고 디테일 정보 추가 실패',
-            detail: error.message
-        });
+        console.log(error);
+        res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.UPDATE_REFLECTION_DETAIL_FAIL));
     }
 }
 
@@ -114,19 +99,16 @@ const getPastReflectionList = async (req, res, next) => {
                 state: "Done"
             }
         });
-        return res.status(200).json({
+        return res.status(sc.OK).json({
             "success": true,
-            "message": "data 조회 성공",
+            "message": m.GET_REFLECTION_LIST_SUCCESS,
             "detail": {
                 "reflection": [reflectionData]
             }
         });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: "회고목록 조회 실패",
-            detail: error.message
-        });
+        console.log(error);
+        return res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.GET_REFLECTION_LIST_FAIL));
     }
 }
 
@@ -169,19 +151,11 @@ const endInProgressReflection = async (req, res, next) => {
                 id: team_id
             }
         });
-        
-        return res.status(200).json({
-            success: true,
-            message: "회고 종료 성공",
-            detail: {
-                reflection: data
-            }
-        })
+        return res.status(sc.OK).send(sc.OK, m.END_REFLECTION_SUCCESS, {reflection: data});
+
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        })
+        console.log(error);
+        return res.status(sc.BAD_REQUEST).send(fail(sc.BAD_REQUEST, m.UPDATE_FEEDBACK_FAIL));
     }
 }
 
