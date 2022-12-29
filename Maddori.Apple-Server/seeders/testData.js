@@ -199,8 +199,7 @@ module.exports = {
         reflection_id: reflectionId1 + 1,
         type: "Stop",
         keyword: "s",
-        content: "멈추기",
-        start_content: "시작하기"
+        content: "멈추기"
       },
       {
         from_id: userId1 + 1,
