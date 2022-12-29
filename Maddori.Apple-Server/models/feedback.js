@@ -64,12 +64,7 @@ module.exports = function(sequelize, DataTypes){
             content: {
                 field: "content",
                 type: DataTypes.STRING(400),
-                allowNull: true
-            },
-            start_content: {
-                field: "start_content",
-                type: DataTypes.STRING(200),
-                allowNull: true
+                allowNull: false
             }
         }, {
             sequelize,
