@@ -104,7 +104,7 @@ const reflectionTimeCheck = async (req, res, next) => {
             where: {
                 id: reflection_id,
                 team_id: team_id,
-                date: { [Op.lt]: new Date() },
+                date: { [Op.lte]: new Date() },
                 state: { [Op.ne]: 'Done'}
             },
             raw: true
