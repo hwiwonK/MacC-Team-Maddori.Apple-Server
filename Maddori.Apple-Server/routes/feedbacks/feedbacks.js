@@ -322,6 +322,15 @@ const getTeamAndUserFeedback = async (req, res) => {
         const member_id = req.query.members;
         const { team_id, reflection_id } = req.params
 
+        const memberTeam = await userteam.findOne({
+            where: {
+                user_id: member_id,
+                team_id: team_id
+            }
+        });
+
+        if (!memberTeam) throw Error('받는 멤버가 현재 팀에 속하지 않음');
+
         const userFeedbackData = await feedback.findAll({
             where: {
                 team_id: team_id,
