@@ -154,8 +154,7 @@ module.exports = {
         reflection_id: reflectionId1,
         type: "Stop",
         keyword: "s",
-        content: "멈추기",
-        start_content: "시작하기"
+        content: "멈추기"
       },
       {
         from_id: userId1 + 1,
@@ -164,8 +163,7 @@ module.exports = {
         reflection_id: reflectionId1,
         type: "Continue",
         keyword: "c",
-        content: "지속하기",
-        start_content: "시작하기"
+        content: "지속하기"
       },
       {
         from_id: userId1,
@@ -201,8 +199,7 @@ module.exports = {
         reflection_id: reflectionId1 + 1,
         type: "Stop",
         keyword: "s",
-        content: "멈추기",
-        start_content: "시작하기"
+        content: "멈추기"
       },
       {
         from_id: userId1 + 1,
@@ -211,8 +208,7 @@ module.exports = {
         reflection_id: reflectionId1 + 1,
         type: "Continue",
         keyword: "c",
-        content: "지속하기",
-        start_content: "시작하기"
+        content: "지속하기"
       },
       {
         from_id: userId1 + 4,
@@ -230,8 +226,7 @@ module.exports = {
         reflection_id: reflectionId1 + 2,
         type: "Stop",
         keyword: "s",
-        content: "그만하기",
-        start_content: "시작하기"
+        content: "그만하기"
       },      
       {
         from_id: userId1 + 3,
@@ -240,8 +235,7 @@ module.exports = {
         reflection_id: reflectionId1 + 2,
         type: "Continue",
         keyword: "c",
-        content: "지속하기",
-        start_content: "시작하기"
+        content: "지속하기"
       }      
     ]
 

@@ -5,13 +5,12 @@ const { body, validationResult } = require('express-validator');
 const textLimit = {
     feedbackKeywordLimit: 10,
     feedbackContentLimit: 400,
-    feedbackStartContentLimit: 200,
     usernameLimit: 6,
     teamNameLimit: 10,
     reflectionNameLimit: 15
 }
 
-// 피드백 keyword, content, start_content 형식 검증 (글자 수 제한)
+// 피드백 keyword, content 형식 검증 (글자 수 제한)
 const validateFeedback = [
     body('keyword')
         .not().isEmpty()
@@ -27,12 +26,6 @@ const validateFeedback = [
         .withMessage('content는 문자열 형식이어야 함')
         .isLength({ max: textLimit.feedbackContentLimit })
         .withMessage(`content 글자 수 제한(${textLimit.feedbackContentLimit}자) 초과`),
-    body('start_content')
-        .isString()
-        .optional({ nullable: true })
-        .withMessage('start_content는 문자열 형식이어야 함')
-        .isLength({ max: textLimit.feedbackStartContentLimit })
-        .withMessage(`start_content 글자 수 제한(${textLimit.feedbackStartContentLimit}자) 초과`),
     
     (req, res, next) => {
         const errors = validationResult(req);
