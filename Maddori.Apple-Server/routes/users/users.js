@@ -49,19 +49,30 @@ async function userJoinTeam(req, res, next) {
         const requestTeam = await team.findByPk(team_id);
         if (requestTeam === null) throw Error('요청하는 팀이 존재하지 않음');
 
+        // userteam 테이블에 저장할 유저의 이름 정보 찾기
+        const requestUser = await user.findByPk(user_id);
+
         // userteam 테이블 업데이트
-        const [createdUserteam, created] = await userteam.findOrCreate({
+        let [createdUserteam, created] = await userteam.findOrCreate({
             where: {
                 user_id: user_id,
                 team_id: team_id
             },
             defaults: {
                 user_id: user_id,
-                team_id: team_id
+                team_id: team_id,
+                nickname: requestUser.username
             }
         });
 
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
+        
+        // v1.4 이후 새로 생성된 프로필 관련 필드는 반환하지 않음
+        createdUserteam = createdUserteam.dataValues;
+        delete createdUserteam.nickname;
+        delete createdUserteam.role;
+        delete createdUserteam.profile_picture;
+        
         res.status(201).json({
             success: true,
             message: '유저 팀 합류 성공',
