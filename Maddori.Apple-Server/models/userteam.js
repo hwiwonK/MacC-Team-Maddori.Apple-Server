@@ -45,6 +45,12 @@ module.exports = function(sequelize, DataTypes){
                 field: "profile_picture",
                 type: BLOB('medium'),
                 allowNull: true
+            },
+            admin: {
+                field: "admin",
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         }, {
             sequelize,
