@@ -48,27 +48,44 @@ module.exports = {
       {
         user_id: userId1,
         team_id: teamId1,
-        admin: true
+        nickname: '메리',
+        role: '백엔드 개발자'
       },
       {
         user_id: userId1 + 1,
         team_id: teamId1,
-        admin: false
+        nickname: '진저',
+        role: 'PM, iOS 개발자, 디자이너'
       },
       {
         user_id: userId1 + 2,
         team_id: teamId1,
-        admin: false
+        nickname: '호야',
+        role: 'iOS 개발자, 팀 관리자'
+      },
+      {
+        user_id: userId1 + 3,
+        team_id: teamId1,
+        nickname: '케미',
+        role: 'iOS 개발 리드'
+      },
+      {
+        user_id: userId1 + 4,
+        team_id: teamId1,
+        nickname: '이드',
+        role: 'iOS 개발자, 디자이너'
       },
       {
         user_id: userId1 + 3,
         team_id: teamId1 + 1,
-        admin: false
+        nickname: '케미',
+        role: 'iOS 개발 리드'
       },
       {
         user_id: userId1 + 4,
         team_id: teamId1 + 1,
-        admin:true
+        nickname: '이드',
+        role: 'iOS 개발자, 디자이너'
       }
     ]
     // userteam insert data
@@ -166,6 +183,24 @@ module.exports = {
         content: "지속하기"
       },
       {
+        from_id: userId1 + 3,
+        to_id: userId1 + 4,
+        team_id: teamId1,
+        reflection_id: reflectionId1,
+        type: "Stop",
+        keyword: "s",
+        content: "멈추기"
+      },
+      {
+        from_id: userId1 + 4,
+        to_id: userId1 + 3,
+        team_id: teamId1,
+        reflection_id: reflectionId1,
+        type: "Continue",
+        keyword: "c",
+        content: "지속하기"
+      },
+      {
         from_id: userId1,
         to_id: userId1 + 1,
         team_id: teamId1,
@@ -204,6 +239,24 @@ module.exports = {
       {
         from_id: userId1 + 1,
         to_id: userId1,
+        team_id: teamId1,
+        reflection_id: reflectionId1 + 1,
+        type: "Continue",
+        keyword: "c",
+        content: "지속하기"
+      },
+      {
+        from_id: userId1 + 3,
+        to_id: userId1 + 4,
+        team_id: teamId1,
+        reflection_id: reflectionId1 + 1,
+        type: "Stop",
+        keyword: "s",
+        content: "멈추기"
+      },
+      {
+        from_id: userId1 + 4,
+        to_id: userId1 + 3,
         team_id: teamId1,
         reflection_id: reflectionId1 + 1,
         type: "Continue",
