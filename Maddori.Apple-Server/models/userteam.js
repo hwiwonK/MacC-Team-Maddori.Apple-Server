@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require("sequelize");
+const { Model, BLOB } = require("sequelize");
 
 module.exports = function(sequelize, DataTypes){
     class userteam extends Model {
@@ -25,18 +25,33 @@ module.exports = function(sequelize, DataTypes){
 
     userteam.init(
         {
-        id: {
-            field: "id",
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        admin: {
-            field: "admin",
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
-        },
+            id: {
+                field: "id",
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            },
+            nickname: {
+                field: "nickname",
+                type: DataTypes.STRING(6),
+                allowNull: false
+            },
+            role: {
+                field: "role",
+                type: DataTypes.STRING(20),
+                allowNull: true
+            },
+            profile_picture: {
+                field: "profile_picture",
+                type: BLOB('medium'),
+                allowNull: true
+            },
+            admin: {
+                field: "admin",
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            }
         }, {
             sequelize,
             modelName: "userteam",

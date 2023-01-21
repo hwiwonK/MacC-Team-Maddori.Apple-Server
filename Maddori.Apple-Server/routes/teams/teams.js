@@ -41,6 +41,9 @@ async function createTeam(req, res, next) {
             createdTeamCode = generateCode();
         } while (checkDuplicateCode(createdTeamCode));
 
+        // userteam 테이블에 저장할 유저의 이름 정보 찾기
+        const requestUser = await user.findByPk(user_id);
+
         // 팀 생성
         const createdTeam = await team.create({
             team_name: teamContent.team_name,
@@ -65,7 +68,8 @@ async function createTeam(req, res, next) {
         const createdUserTeam = await userteam.create({
             user_id: user_id,
             team_id: createdTeam.id,
-            admin: true
+            admin: true,
+            nickname: requestUser.username
         });
         
         res.status(201).json({
