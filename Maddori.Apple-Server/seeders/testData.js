@@ -43,6 +43,32 @@ module.exports = {
     const userId1 = await queryInterface.bulkInsert("user", users, { returning: ["id"]});
     const teamId1 = await queryInterface.bulkInsert("team", teams, { returning: ["id"]});
 
+    // usertoken data
+    const usertokens = [
+      {
+        refresh_token: 'mary_refresh_token',
+        user_id: userId1
+      },
+      {
+        refresh_token: 'ginger_refresh_token',
+        user_id: userId1 + 1
+      },
+      {
+        refresh_token: 'hoya_refresh_token',
+        user_id: userId1 + 2
+      },
+      {
+        refresh_token: 'chemi_refresh_token',
+        user_id: userId1 + 3
+      },
+      {
+        refresh_token: 'id_refresh_token',
+        user_id: userId1 + 4
+      },
+    ]
+    // usertoken insert data
+    await queryInterface.bulkInsert('usertoken', usertokens);
+
     // userteam data
     const userteams = [
       {
