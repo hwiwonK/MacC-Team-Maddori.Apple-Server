@@ -31,12 +31,6 @@ module.exports = function(sequelize, DataTypes){
             primaryKey: true,
             autoIncrement: true
         },
-        admin: {
-            field: "admin",
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
-        },
         }, {
             sequelize,
             modelName: "userteam",
