@@ -37,7 +37,7 @@ async function userLogin(req, res, next) {
 }
 
 // request data : user_id, team_id
-// response data : userteam_id, user_id, team_id
+// response data : userteam_id, user_id, team_id, admin
 // 유저가 팀에 합류하기
 async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
