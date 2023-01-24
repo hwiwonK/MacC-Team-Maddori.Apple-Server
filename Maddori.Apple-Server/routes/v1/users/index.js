@@ -10,10 +10,10 @@ const {
     userTeamCheck,
     userAdminCheck,
     reflectionStateCheck
-} = require('../../middlewares/auth');
+} = require('../../../middlewares/auth');
 const {
     validateUsername
-} = require('../../middlewares/validate');
+} = require('../../../middlewares/validate');
 
 // user auth 검증
 router.use('/', userCheck);

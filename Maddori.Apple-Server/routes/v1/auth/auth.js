@@ -1,5 +1,5 @@
-const {user, team, userteam, reflection, feedback, usertoken } = require('../../models');
-const jwtUtil = require('../../utils/jwt.util');
+const {user, team, userteam, reflection, feedback, usertoken } = require('../../../models');
+const jwtUtil = require('../../../utils/jwt.util');
 const jwt = require('jsonwebtoken');
 
 // request data: identity token

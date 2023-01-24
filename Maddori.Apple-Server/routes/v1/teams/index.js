@@ -11,10 +11,10 @@ const {
     userCheck,
     userTeamCheck,
     userAdminCheck
-} = require('../../middlewares/auth');
+} = require('../../../middlewares/auth');
 const {
     validateTeamname
-} = require('../../middlewares/validate');
+} = require('../../../middlewares/validate');
 
 // user auth 검증
 router.use('/', userCheck);
