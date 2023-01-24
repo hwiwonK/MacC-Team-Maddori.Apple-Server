@@ -13,10 +13,10 @@ const {
     reflectionTimeCheck,
     reflectionStateCheck,
     teamReflectionRelationCheck
-} = require('../../middlewares/auth');
+} = require('../../../middlewares/auth');
 const {
     validateReflectionname
-} = require('../../middlewares/validate');
+} = require('../../../middlewares/validate');
 
 // user auth 검증
 router.use('/', userCheck);

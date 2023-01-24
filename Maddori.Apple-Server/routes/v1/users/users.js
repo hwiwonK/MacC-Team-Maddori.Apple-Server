@@ -1,4 +1,4 @@
-const {user, team, userteam, reflection, feedback} = require('../../models');
+const {user, team, userteam, reflection, feedback} = require('../../../models');
 
 // TODO : social login, token 생성 방식으로 변경
 // request data : username

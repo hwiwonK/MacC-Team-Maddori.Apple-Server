@@ -3,7 +3,7 @@ const router = new express.Router({ mergeParams: true });
 
 const {
     userCheck,
-} = require('../../middlewares/auth');
+} = require('../../../middlewares/auth');
 
 const {
     appleLogin,

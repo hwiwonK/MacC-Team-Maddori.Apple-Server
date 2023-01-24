@@ -1,4 +1,4 @@
-const {user, team, userteam, reflection, feedback} = require('../../models');
+const {user, team, userteam, reflection, feedback} = require('../../../models');
 const { validationResult } = require('express-validator');
 
 // 팀 invitation_code 생성

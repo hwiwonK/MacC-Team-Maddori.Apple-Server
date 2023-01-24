@@ -15,10 +15,10 @@ const {
     reflectionStateCheck,
     teamReflectionRelationCheck,
     reflectionFeedbackRelationCheck
-} = require('../../middlewares/auth');
+} = require('../../../middlewares/auth');
 const {
     validateFeedback
-} = require('../../middlewares/validate');
+} = require('../../../middlewares/validate');
 
 
 // user auth 검증
