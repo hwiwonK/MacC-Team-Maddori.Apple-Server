@@ -24,7 +24,7 @@ async function userJoinTeam(req, res, next) {
             },
             defaults: {
                 user_id: user_id,
-                team_id: team_id,
+                team_id: parseInt(team_id),
                 nickname: requestUser.username
             }
         });
