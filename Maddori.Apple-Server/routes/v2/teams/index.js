@@ -2,7 +2,7 @@ const express = require('express');
 const router = new express.Router({ mergeParams: true });
 
 const {
-
+    createTeam
 } = require('./teams');
 const {
     userCheck,
@@ -16,5 +16,6 @@ const {
 // user auth 검증
 router.use('/', userCheck);
 // handler
+router.post('/', [validateTeamname], createTeam);
 
 module.exports = router;
