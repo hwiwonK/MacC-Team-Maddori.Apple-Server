@@ -5,7 +5,7 @@ const {user, team, userteam, reflection, feedback} = require('../../../models');
 // response data : user_id, username
 // 새로운 user 생성하기
 async function userLogin(req, res, next) {
-    console.log("유저 로그인");
+    // console.log("유저 로그인");
     const user_id = req.user_id;
     const { username } = req.body;
 
