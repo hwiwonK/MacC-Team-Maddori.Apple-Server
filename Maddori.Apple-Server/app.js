@@ -17,16 +17,15 @@ sequelize.sync({ force: false })
     // console.error(err);
 });
 
+// 버전별 라우팅 분리
+const apiVersion1 = require('./routes/v1/index');
+const apiVersion2 = require('./routes/v2/index');
+
 app.get('/', (req, res) => {
   res.send('Hello World! This is KeyGo server')
 });
 
-app.use('/api/v1/auth', require('./routes/v1/auth/index'));
-
-// 라우팅 (users, teams, reflections, feedbacks 로 분리)
-app.use('/api/v1/users', require('./routes/v1/users/index'));
-app.use('/api/v1/teams', require('./routes/v1/teams/index'));
-app.use('/api/v1/teams/:team_id/reflections', require('./routes/v1/reflections/index'));
-app.use('/api/v1/teams/:team_id/reflections/:reflection_id/feedbacks', require('./routes/v1/feedbacks/index'));
+app.use('/api/v1', apiVersion1);
+app.use('/api/v2', apiVersion2);
 
 module.exports = app
