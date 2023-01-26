@@ -28,7 +28,6 @@ const updateReflectionDetail = async (req, res, next) => {
             },
         });
 
-        if (updateReflectionSuccess[0] === 0) throw Error('일치하는 회고 정보를 찾지 못함');
         const reflectionDetail = await reflection.findByPk(reflection_id);
 
         res.status(200).json({
