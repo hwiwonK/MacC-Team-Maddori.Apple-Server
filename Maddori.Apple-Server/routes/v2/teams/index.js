@@ -2,7 +2,8 @@ const express = require('express');
 const router = new express.Router({ mergeParams: true });
 
 const {
-    createTeam
+    createTeam,
+    getCertainTeamDetail
 } = require('./teams');
 const {
     userCheck,
@@ -17,5 +18,6 @@ const {
 router.use('/', userCheck);
 // handler
 router.post('/', [validateTeamname], createTeam);
+router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 
 module.exports = router;

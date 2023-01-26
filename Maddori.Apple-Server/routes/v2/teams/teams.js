@@ -86,6 +86,38 @@ async function createTeam(req, res, next) {
     }
 }
 
+// request data : user_id, team_id
+// response data : team_id, team_name, invitation_code
+// 팀의 정보 가져오기
+async function getCertainTeamDetail(req, res, next) {
+    // console.log("팀의 정보 가져오기");
+
+    try {
+        const user_id = req.user_id;
+        const { team_id } = req.params;
+
+        // 팀의 team_id, team_name, invitation_code
+        const teamInformation = await team.findByPk(team_id, {
+            attributes: ['id', 'team_name', 'invitation_code']
+        });        
+
+        res.status(200).json({
+            success: true,
+            message: '유저가 속한 팀의 정보 가져오기 성공',
+            detail: teamInformation
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '유저가 속한 팀의 정보 가져오기 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
-    createTeam
+    createTeam,
+    getCertainTeamDetail
 }
