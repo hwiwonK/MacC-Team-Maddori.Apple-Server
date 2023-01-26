@@ -49,58 +49,59 @@ const updateReflectionDetail = async (req, res, next) => {
 //* request data: reflection_id, team_id
 //* response data: id, reflection_name, date, state, team_id
 //* 특정 회고를 종료하는 API
-// const endInProgressReflection = async (req, res, next) => {
-//     try {
-//         const user_id = req.user_id;
-//         const { reflection_id, team_id } = req.params;
+const endInProgressReflection = async (req, res, next) => {
+    try {
+        const user_id = req.user_id;
+        const { reflection_id, team_id } = req.params;
 
-//         await reflection.update(
-//             {
-//                 state: "Done"
-//             },
-//             {
-//                 where:{
-//                     id: reflection_id,
-//                     team_id: team_id
-//                     }
-//             })
-//         const data = await reflection.findByPk(reflection_id);
+        await reflection.update({
+            state: 'Done'
+        },{
+            where: {
+                id: reflection_id,
+                team_id: team_id,
+                state: 'Progressing'
+            }
+        });
+
+        const data = await reflection.findByPk(reflection_id);
         
-//         // 새로운 회고 생성 및 team의 현재 회고 id 업데이트
-//         const newReflectionData = await reflection.create({
-//             team_id: team_id
-//         })
-//         await team.update({
-//             current_reflection_id: newReflectionData.id
-//         },{
-//             where: {
-//                 id: team_id
-//             }
-//         });
-//         // team의 최근 회고 id 업데이트
-//         await team.update({
-//             recent_reflection_id: reflection_id
-//         },{
-//             where: {
-//                 id: team_id
-//             }
-//         });
+        // 새로운 회고 생성 및 team의 현재 회고 id 업데이트
+        const newReflectionData = await reflection.create({
+            team_id: team_id
+        })
+        await team.update({
+            current_reflection_id: newReflectionData.id
+        },{
+            where: {
+                id: team_id
+            }
+        });
+        // team의 최근 회고 id 업데이트
+        await team.update({
+            recent_reflection_id: reflection_id
+        },{
+            where: {
+                id: team_id
+            }
+        });
         
-//         return res.status(200).json({
-//             success: true,
-//             message: "회고 종료 성공",
-//             detail: {
-//                 reflection: data
-//             }
-//         })
-//     } catch (error) {
-//         return res.status(400).json({
-//             success: false,
-//             message: error.message
-//         })
-//     }
-// }
+        return res.status(200).json({
+            success: true,
+            message: "회고 종료 성공",
+            detail: {
+                reflection: data
+            }
+        })
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 module.exports = {
-    updateReflectionDetail
+    updateReflectionDetail,
+    endInProgressReflection
 };

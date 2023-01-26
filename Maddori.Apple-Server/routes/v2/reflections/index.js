@@ -1,7 +1,8 @@
 const express = require('express');
 const router = new express.Router({ mergeParams: true });
 const {
-    updateReflectionDetail
+    updateReflectionDetail,
+    endInProgressReflection
 } = require('./reflections');
 const {
     userCheck,
@@ -18,7 +19,7 @@ const {
 // user auth 검증
 router.use('/', userCheck);
 // handler
-// router.patch('/:reflection_id/end', [userTeamCheck, userAdminCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], endInProgressReflection);
+router.patch('/:reflection_id/end', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], endInProgressReflection);
 router.patch('/:reflection_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), validateReflectionname], updateReflectionDetail);
 
 module.exports = router;
