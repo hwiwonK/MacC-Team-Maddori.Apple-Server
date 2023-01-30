@@ -1,6 +1,4 @@
 const {user, team, userteam, reflection, feedback} = require('../../../models');
-// const multer = require('multer');
-const fs = require("fs");
 
 // request data : user_id, team_id
 // response data : userteam_id, user_id, team_id

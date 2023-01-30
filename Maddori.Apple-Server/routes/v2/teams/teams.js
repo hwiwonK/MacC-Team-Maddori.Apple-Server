@@ -31,7 +31,6 @@ function checkDuplicateCode(createdTeamCode) {
 // 유저가 팀 생성하기 (팀의 코드 생성, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
     const user_id = req.user_id;
-    // const teamContent = req.body;
     const { team_name, nickname, role } = req.body;
 
     try {
@@ -40,8 +39,6 @@ async function createTeam(req, res, next) {
         do {
             createdTeamCode = generateCode();
         } while (checkDuplicateCode(createdTeamCode));
-
-        
 
         // 팀 생성
         const createdTeam = await team.create({
@@ -63,25 +60,33 @@ async function createTeam(req, res, next) {
             }
         });
 
-        // 유저의 팀 합류
-        const createdUserTeam = await userteam.create({
+        // 프로필 이미지 저장된 경로 구하기
+        const imagePath = req.file.path.split('resources')[1]
+
+        // userteam 테이블 업데이트(팀 합류 및 프로필 생성)
+        let createdProfile = await userteam.create({
             user_id: user_id,
             team_id: createdTeam.id,
-            nickname: requestUser.username,
-            
+            nickname: nickname,
+            role: role,
+            profile_image_path: imagePath
         });
+
+        // v1.4 이후로 사용하지 않는 admin 필드는 반환하지 않음
+        createdProfile = createdProfile.dataValues;
+        delete createdProfile.admin;
         
         res.status(201).json({
             success: true,
-            message: '팀 생성 완료',
-            detail: createdTeam
+            message: '팀 생성 및 팀 합류 완료',
+            detail: createdProfile
         });
 
     } catch (error) {
         // TODO: 에러 처리 수정
         res.status(400).json({
             success: false,
-            message: '팀 생성 실패',
+            message: '팀 생성 및 팀 합류 실패',
             detail: error.message
         });
     }

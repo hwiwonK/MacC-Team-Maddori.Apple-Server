@@ -29,7 +29,7 @@ const {
 router.use('/', userCheck);
 // handler
 router.get('/', getCertainTeamName);
-router.post('/', [validateTeamname], uploadFile, createTeam);
+router.post('/', uploadFile, [validateTeamname], createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 
 module.exports = router;
