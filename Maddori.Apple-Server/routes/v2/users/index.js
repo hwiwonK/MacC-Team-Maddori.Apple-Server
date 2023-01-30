@@ -19,13 +19,16 @@ const {
     reflectionStateCheck
 } = require('../../../middlewares/auth');
 const {
-    validateUsername
+    validateNickname
 } = require('../../../middlewares/validate');
+const {
+    uploadFile
+ } = require('../../../middlewares/upload');
 
 // user auth 검증
 router.use('/', userCheck);
 // handler
-router.post('/join-team/:team_id', userJoinTeam);
+router.post('/join-team/:team_id', uploadFile, [validateNickname], userJoinTeam);
 router.delete('/team/:team_id/leave', userLeaveTeam);
 
 module.exports = router;

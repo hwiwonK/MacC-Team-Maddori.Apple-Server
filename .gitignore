@@ -4,6 +4,9 @@
 ### Others ###
 .DS_Store
 
+### resources ###
+resources/
+
 ### Node ###
 # Logs
 logs
