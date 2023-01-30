@@ -21,12 +21,15 @@ const {
 const {
     validateTeamname
 } = require('../../../middlewares/validate');
+const {
+    uploadFile
+ } = require('../../../middlewares/upload');
 
 // user auth 검증
 router.use('/', userCheck);
 // handler
 router.get('/', getCertainTeamName);
-router.post('/', [validateTeamname], createTeam);
+router.post('/', [validateTeamname], uploadFile, createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 
 module.exports = router;

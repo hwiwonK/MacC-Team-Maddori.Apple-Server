@@ -31,7 +31,8 @@ function checkDuplicateCode(createdTeamCode) {
 // 유저가 팀 생성하기 (팀의 코드 생성, 팀의 첫번째 회고 자동 생성)
 async function createTeam(req, res, next) {
     const user_id = req.user_id;
-    const teamContent = req.body;
+    // const teamContent = req.body;
+    const { team_name, nickname, role } = req.body;
 
     try {
         // 생성된 팀 코드가 중복되지 않을 때까지 반복
@@ -40,12 +41,11 @@ async function createTeam(req, res, next) {
             createdTeamCode = generateCode();
         } while (checkDuplicateCode(createdTeamCode));
 
-        // userteam 테이블에 저장할 유저의 이름 정보 찾기
-        const requestUser = await user.findByPk(user_id);
+        
 
         // 팀 생성
         const createdTeam = await team.create({
-            team_name: teamContent.team_name,
+            team_name: team_name,
             invitation_code: createdTeamCode
         });
 
@@ -67,7 +67,8 @@ async function createTeam(req, res, next) {
         const createdUserTeam = await userteam.create({
             user_id: user_id,
             team_id: createdTeam.id,
-            nickname: requestUser.username
+            nickname: requestUser.username,
+            
         });
         
         res.status(201).json({

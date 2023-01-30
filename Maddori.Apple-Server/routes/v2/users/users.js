@@ -16,8 +16,11 @@ async function userJoinTeam(req, res, next) {
         const requestTeam = await team.findByPk(team_id);
         if (requestTeam === null) throw Error('요청하는 팀이 존재하지 않음');
 
+        // 프로필 이미지 저장된 경로 구하기
+        const imagePath = req.file.path.split('resources')[1]
+
         // userteam 테이블 업데이트(팀 합류 및 프로필 생성)
-        let [createdUserteam, created] = await userteam.findOrCreate({
+        let [createdProfile, created] = await userteam.findOrCreate({
             where: {
                 user_id: user_id,
                 team_id: team_id
@@ -26,29 +29,16 @@ async function userJoinTeam(req, res, next) {
                 user_id: user_id,
                 team_id: parseInt(team_id),
                 nickname: nickname,
-                role: role
+                role: role,
+                profile_image_path: imagePath
             }
         });
 
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
 
-        // 프로필 이미지 저장된 경로 구하기
-        const imagePath = req.file.path.split('resources')[1]
-
-        // 프로필 이미지가 저장된 링크 userteam 테이블에 업데이트
-        await userteam.update({
-            profile_image_path: imagePath
-        },{
-            where: {
-                user_id: user_id,
-                team_id: team_id
-            }
-        });
-
-        // 프로필 반환하기
-        const createdProfile = await userteam.findByPk(createdUserteam.id, {
-            attributes: ['id', 'nickname', 'role', 'profile_image_path', 'team_id', 'user_id']
-        });
+        // v1.4 이후로 사용하지 않는 admin 필드는 반환하지 않음
+        createdProfile = createdProfile.dataValues;
+        delete createdProfile.admin;
               
         res.status(201).json({
             success: true,
