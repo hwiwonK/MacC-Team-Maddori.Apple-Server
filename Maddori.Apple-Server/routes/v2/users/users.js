@@ -33,7 +33,10 @@ async function userJoinTeam(req, res, next) {
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
 
         // 프로필 이미지가 저장된 링크 userteam 테이블에 업데이트
-        
+        // const addProfileImage = await userteam.update({
+        //     profile_image: req.file.path
+        // });
+
         // // 프로필 생성
         // let createdProfile = await userteam.update({
         //     nickname: nickname,

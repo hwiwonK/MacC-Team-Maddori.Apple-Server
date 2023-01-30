@@ -41,9 +41,9 @@ module.exports = function(sequelize, DataTypes){
                 type: DataTypes.STRING(20),
                 allowNull: true
             },
-            profile_picture: {
-                field: "profile_picture",
-                type: BLOB('medium'),
+            profile_image_path: {
+                field: "profile_image_path",
+                type: DataTypes.STRING,
                 allowNull: true
             },
             admin: {
