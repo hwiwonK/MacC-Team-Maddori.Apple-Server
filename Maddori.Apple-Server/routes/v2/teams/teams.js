@@ -73,7 +73,7 @@ async function createTeam(req, res, next) {
         });
 
         // v1.4 이후로 사용하지 않는 admin 필드는 반환하지 않음
-        let createdProfile = await userteam.findByPk(createdUserteam.id, {
+        const createdProfile = await userteam.findByPk(createdUserteam.id, {
             attributes: ['id', 'nickname', 'role', 'profile_image_path', 'user_id'],
             include: [
                 {
