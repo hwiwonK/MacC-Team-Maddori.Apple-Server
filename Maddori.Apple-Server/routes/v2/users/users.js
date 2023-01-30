@@ -10,7 +10,7 @@ async function userJoinTeam(req, res, next) {
     const user_id = req.user_id;
     const { team_id } = req.params;
     // const { nickname, role } = req.body;
-    // console.log(req.file);
+    console.log(req.file.path);
     try {
         // team 정보 유효한지 체크
         const requestTeam = await team.findByPk(team_id);
@@ -32,6 +32,8 @@ async function userJoinTeam(req, res, next) {
 
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
 
+        // 프로필 이미지가 저장된 링크 userteam 테이블에 업데이트
+        
         // // 프로필 생성
         // let createdProfile = await userteam.update({
         //     nickname: nickname,

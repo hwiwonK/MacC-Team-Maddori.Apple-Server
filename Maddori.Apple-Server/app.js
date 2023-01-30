@@ -7,6 +7,9 @@ const { sequelize } = require('./models');
 // body-parser 사용 (json 요청을 받기 위함)
 app.use(express.json());
 
+// 정적 파일 제공을 위한 static 미들웨어 추가 (resources 폴더)
+app.use(express.static('resources'));
+
 // database 연결
 sequelize.sync({ force: false })
 .then(() => {
