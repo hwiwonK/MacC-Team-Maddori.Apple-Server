@@ -1,4 +1,6 @@
 const {user, team, userteam, reflection, feedback} = require('../../../models');
+// const multer = require('multer');
+const fs = require("fs");
 
 // request data : user_id, team_id
 // response data : userteam_id, user_id, team_id
@@ -7,8 +9,8 @@ async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
     const user_id = req.user_id;
     const { team_id } = req.params;
-    const { nickname, role } = req.body;
-    // console.log(req.body);
+    // const { nickname, role } = req.body;
+    // console.log(req.file);
     try {
         // team 정보 유효한지 체크
         const requestTeam = await team.findByPk(team_id);
