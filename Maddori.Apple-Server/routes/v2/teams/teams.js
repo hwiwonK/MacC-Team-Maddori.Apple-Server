@@ -64,7 +64,7 @@ async function createTeam(req, res, next) {
         const imagePath = req.file.path.split('resources')[1]
 
         // userteam 테이블 업데이트(팀 합류 및 프로필 생성)
-        let createdProfile = await userteam.create({
+        let createdUserteam = await userteam.create({
             user_id: user_id,
             team_id: createdTeam.id,
             nickname: nickname,
@@ -73,8 +73,16 @@ async function createTeam(req, res, next) {
         });
 
         // v1.4 이후로 사용하지 않는 admin 필드는 반환하지 않음
-        createdProfile = createdProfile.dataValues;
-        delete createdProfile.admin;
+        const createdProfile = await userteam.findByPk(createdUserteam.id, {
+            attributes: ['id', 'nickname', 'role', 'profile_image_path', 'user_id'],
+            include: [
+                {
+                    model: team, 
+                    where: { id: createdUserteam.team_id },
+                    attributes: ['id', 'team_name', 'invitation_code']
+                }
+            ]
+        });
         
         res.status(201).json({
             success: true,
