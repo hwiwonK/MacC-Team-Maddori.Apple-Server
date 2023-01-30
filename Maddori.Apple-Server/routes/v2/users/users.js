@@ -9,15 +9,15 @@ async function userJoinTeam(req, res, next) {
     // console.log("유저 팀 조인");
     const user_id = req.user_id;
     const { team_id } = req.params;
-    // const { nickname, role } = req.body;
-    console.log(req.file.path);
+    const { nickname, role } = req.body;
+
     try {
         // team 정보 유효한지 체크
         const requestTeam = await team.findByPk(team_id);
         if (requestTeam === null) throw Error('요청하는 팀이 존재하지 않음');
 
         // userteam 테이블 업데이트(팀 합류 및 프로필 생성)
-        let [createdProfile, created] = await userteam.findOrCreate({
+        let [createdUserteam, created] = await userteam.findOrCreate({
             where: {
                 user_id: user_id,
                 team_id: team_id
@@ -32,27 +32,24 @@ async function userJoinTeam(req, res, next) {
 
         if (created === false) throw Error('이미 유저가 해당 팀에 합류된 상태');
 
-        // 프로필 이미지가 저장된 링크 userteam 테이블에 업데이트
-        // const addProfileImage = await userteam.update({
-        //     profile_image: req.file.path
-        // });
+        // 프로필 이미지 저장된 경로 구하기
+        const imagePath = req.file.path.split('resources')[1]
 
-        // // 프로필 생성
-        // let createdProfile = await userteam.update({
-        //     nickname: nickname,
-        //     role: role
-        // },{
-        //     where: {
-        //         user_id: user_id,
-        //         team_id: team_id
-        //     }
-        // });
-        
-        // 프로필 사진 필드와 리더 정보 필드(v1.4 이후로 사용 안 함)는 반환하지 않음
-        createdProfile = createdProfile.dataValues;
-        delete createdProfile.admin;
-        // delete createdProfile.profile_picture;
-        
+        // 프로필 이미지가 저장된 링크 userteam 테이블에 업데이트
+        await userteam.update({
+            profile_image_path: imagePath
+        },{
+            where: {
+                user_id: user_id,
+                team_id: team_id
+            }
+        });
+
+        // 프로필 반환하기
+        const createdProfile = await userteam.findByPk(createdUserteam.id, {
+            attributes: ['id', 'nickname', 'role', 'profile_image_path', 'team_id', 'user_id']
+        });
+              
         res.status(201).json({
             success: true,
             message: '유저 팀 합류 및 프로필 생성 성공',
