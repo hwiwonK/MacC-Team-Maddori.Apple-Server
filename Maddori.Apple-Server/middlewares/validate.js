@@ -7,7 +7,8 @@ const textLimit = {
     feedbackContentLimit: 400,
     usernameLimit: 6,
     teamNameLimit: 10,
-    reflectionNameLimit: 15
+    reflectionNameLimit: 15,
+    nicknameLimit: 6
 }
 
 // 피드백 keyword, content 형식 검증 (글자 수 제한)
@@ -59,6 +60,39 @@ const validateUsername = [
         })
         .custom((value) => !/\s/.test(value))
         .withMessage('username 띄어쓰기 포함 불가'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: '입력 값의 형식이 잘못됨',
+                detail: errors.array()[0].msg
+            })
+        }
+        next();
+    }
+]
+
+// username 형식 검증 (글자 수 제한, 특수문자 불가능, 띄어쓰기 불가능)
+const validateNickname = [
+    body('nickname')
+        .not().isEmpty()
+        .withMessage('nickname 값이 비어있음')
+        .isString()
+        .withMessage('nickname은 문자열 형식이어야 함')
+        .isLength({ max: textLimit.nicknameLimit })
+        .withMessage(`nickname 글자 수 제한(${textLimit.nicknameLimit}자) 초과`)
+        .custom((value) => {
+            const pattern = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/ // 특수문자
+            const pattern2 = /\p{Extended_Pictographic}/u; // 이모지
+            if (!!pattern.test(value) || !!pattern2.test(value)) {
+                throw new Error('nickname 특수문자 포함 불가');
+            }
+            return true;
+        })
+        .custom((value) => !/\s/.test(value))
+        .withMessage('nickname 띄어쓰기 포함 불가'),
 
     (req, res, next) => {
         const errors = validationResult(req);
@@ -129,5 +163,6 @@ module.exports = {
     validateFeedback,
     validateUsername,
     validateTeamname,
-    validateReflectionname
+    validateReflectionname,
+    validateNickname
 }

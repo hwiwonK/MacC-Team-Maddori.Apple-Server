@@ -19,7 +19,8 @@ const {
     userAdminCheck
 } = require('../../../middlewares/auth');
 const {
-    validateTeamname
+    validateTeamname,
+    validateNickname
 } = require('../../../middlewares/validate');
 const {
     uploadFile
@@ -29,7 +30,7 @@ const {
 router.use('/', userCheck);
 // handler
 router.get('/', getCertainTeamName);
-router.post('/', uploadFile, [validateTeamname], createTeam);
+router.post('/', uploadFile, [validateTeamname, validateNickname], createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 
 module.exports = router;
