@@ -61,7 +61,7 @@ async function createTeam(req, res, next) {
         });
 
         // 프로필 이미지 저장된 경로 구하기
-        const imagePath = req.file.path.split('resources')[1]
+        const imagePath = req.file ? req.file.path.split('resources')[1] : null;
 
         // userteam 테이블 업데이트(팀 합류 및 프로필 생성)
         let createdUserteam = await userteam.create({
