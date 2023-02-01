@@ -1,6 +1,86 @@
 const {user, team, userteam, reflection, feedback, Sequelize } = require('../../../models');
 const { Op } = require("sequelize");
 
+// request data : user_id, team_id, reflection_id, feedback information(type, keyword, content, to_id)
+// response data : feedback information(id, type, keyword, content), 피드백을 받는 유저의 정보(id, nickname)
+// 회고에 새로운 피드백을 등록한다 
+const createFeedback = async (req, res, next) => {
+    // console.log("피드백 생성하기");
+    const feedbackContent = req.body;
+    
+    try {
+        // 입력 받기
+        const user_id = req.user_id;
+        const { team_id, reflection_id } = req.params;
+        const { type, keyword, content, to_id } = req.body;
+
+        // 받는 user가 team에 속하는지 검증
+        const toUserteam = await userteam.findOne({
+            where: {
+                user_id: to_id,
+                team_id: team_id
+            }
+        });
+        if (!toUserteam) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+
+        // 받는 user가 본인인지 검증
+        if (user_id === to_id) throw Error('본인에게는 피드백을 작성할 수 없음');
+
+        // type 검증
+        if (!(type === 'Continue' || type === 'Stop')) {
+            return res.status(400).json({
+                'success': false,
+                'message': '피드백의 타입정보 오류'
+            });
+        }
+
+        // 피드백 등록, userteam 테이블 통해 피드백을 보낸 대상 유저의 nickname 가져오기
+        const createdFeedback = await feedback.create({
+            type: type,
+            keyword: keyword,
+            content: content,
+            from_id: parseInt(user_id),
+            to_id: parseInt(to_id),
+            team_id: parseInt(team_id),
+            reflection_id: parseInt(reflection_id)
+        }).then(result => {
+            return feedback.findByPk(result.id, {
+                attributes: ['id', 'type', 'keyword', 'content'],
+                include: [
+                    {
+                        model: user,
+                        attributes: [
+                            'id',
+                            [Sequelize.literal('nickname'), 'nickname'],
+                        ],
+                        as: 'to_user',
+                        include: [
+                            {
+                                model: userteam,
+                                attributes: []
+                            }
+                        ]
+                    }
+                ],
+            });
+        });
+
+        res.status(201).json({
+            success: true,
+            message: '피드백 생성하기 성공',
+            detail: createdFeedback
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '피드백 생성하기 실패',
+            detail: error.message
+        });
+    }
+}
+
 // request data: team_id, reflection_id, type
 // response data: id, type, keyword, content, from_user 정보 (id, nickname)
 // 특정 회고에서 사용자가 받은 특정 type의 feedback 리스트를 불러온다
@@ -35,7 +115,7 @@ const getCertainTypeFeedbackAll = async (req, res, next) => {
                 }
             ],
             attributes: [
-                'id', 'type', 'keyword', 'content', 'team_id', 'reflection_id'
+                'id', 'type', 'keyword', 'content'
             ]
         });
 
@@ -107,7 +187,7 @@ const updateFeedback = async (req, res, next) => {
                 }
             ],
             attributes: [
-                'id', 'type', 'keyword', 'content', 'team_id', 'reflection_id'
+                'id', 'type', 'keyword', 'content'
             ]
         });
 
@@ -170,7 +250,7 @@ const getTeamAndUserFeedback = async (req, res) => {
                 }
             ],
             attributes: [
-                'id', 'type', 'keyword', 'content', 'team_id', 'reflection_id'
+                'id', 'type', 'keyword', 'content'
             ]
         });
 
@@ -300,6 +380,7 @@ const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
 }
 
 module.exports = {
+    createFeedback,
     getCertainTypeFeedbackAll,
     updateFeedback,
     getTeamAndUserFeedback,

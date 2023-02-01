@@ -3,12 +3,12 @@ const router = new express.Router({ mergeParams: true });
 
 // version 1 feedbacks api (version 1 api 이용 유지)
 const {
-    createFeedback,
     deleteFeedback
 } = require('../../v1/feedbacks/feedbacks');
 
 // version 2 feedbacks api
 const {
+    createFeedback,
     getCertainTypeFeedbackAll,
     updateFeedback,
     getTeamAndUserFeedback,
