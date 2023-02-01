@@ -116,7 +116,7 @@ const updateFeedback = async (req, res, next) => {
             'message': '피드백 정보 수정 성공',
             'detail': resultFeedbackData
         });
-        
+
     } catch (error) {
         return res.status(400).json({
             'success': false,
@@ -127,7 +127,110 @@ const updateFeedback = async (req, res, next) => {
     
 }
 
+/** request data: team_id, reflection_id
+    query string: members
+    reponse data: id, type, keyword, content, team_id, reflection_id, from_user 정보 (id, nickname)
+    회고의 특정 유저와 유저가 속한 팀의 피드백을 분류하여 조회하는 API **/
+const getTeamAndUserFeedback = async (req, res) => {
+    try {
+        const user_id = req.user_id;
+        const member_id = req.query.members;
+        const { team_id, reflection_id } = req.params
+
+        const memberTeam = await userteam.findOne({
+            where: {
+                user_id: member_id,
+                team_id: team_id
+            }
+        });
+
+        if (!memberTeam) throw Error('받는 멤버가 현재 팀에 속하지 않음');
+
+        const userFeedbackData = await feedback.findAll({
+            where: {
+                team_id: team_id,
+                reflection_id: reflection_id,
+                to_id: member_id,
+                from_id: user_id
+            },
+            include: [
+                {
+                    model: user,
+                    attributes: [
+                        'id',
+                        [Sequelize.literal('nickname'), 'nickname'],
+                    ],
+                    as: 'from_user',
+                    include: [
+                        {
+                            model: userteam,
+                            attributes: []
+                        }
+                    ]
+                }
+            ],
+            attributes: [
+                'id', 'type', 'keyword', 'content', 'team_id', 'reflection_id'
+            ]
+        });
+
+        const teamFeedbackData = await feedback.findAll({
+            where: {
+                team_id: team_id,
+                reflection_id: reflection_id,
+                to_id: member_id,
+                from_id: {
+                    [Op.ne]: user_id
+                }
+            },
+            include: [
+                {
+                    model: user,
+                    attributes: [
+                        'id',
+                        [Sequelize.literal('nickname'), 'nickname'],
+                    ],
+                    as: 'from_user',
+                    include: [
+                        {
+                            model: userteam,
+                            attributes: []
+                        }
+                    ]
+                }
+            ],
+            attributes: [
+                'id', 'type', 'keyword', 'content', 'team_id', 'reflection_id'
+            ]
+        });
+
+        let category = 'self';
+        
+        if (user_id.toString() !== member_id.toString()) { 
+            category = 'others';
+        }
+        
+        return res.status(200).json({
+            success: true,
+            message: "피드백 조회 성공",
+            detail: {
+                category: category,
+                user_feedback: userFeedbackData,
+                team_feedback: teamFeedbackData 
+            }
+        })
+    } catch (error) {
+        return res.status(400).json({
+            success: true,
+            message: "피드백 조회 실패",
+            detail: error.message
+        })
+    }
+    
+};
+
 module.exports = {
     getCertainTypeFeedbackAll,
-    updateFeedback
+    updateFeedback,
+    getTeamAndUserFeedback
 }

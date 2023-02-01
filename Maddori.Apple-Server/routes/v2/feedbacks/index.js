@@ -10,7 +10,8 @@ const {
 // version 2 feedbacks api
 const {
     getCertainTypeFeedbackAll,
-    updateFeedback
+    updateFeedback,
+    getTeamAndUserFeedback
 } = require('./feedbacks');
 
 // middlewares
@@ -34,6 +35,6 @@ router.delete('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, refl
 router.get('/', [userTeamCheck, teamReflectionRelationCheck, reflectionStateCheck('Done')], getCertainTypeFeedbackAll);
 router.put('/:feedback_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), reflectionFeedbackRelationCheck, validateFeedback], updateFeedback);
 // router.get('/from-me', [userTeamCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before', 'Progressing')], getFromMeToCertainMemberFeedbackAll);
-// router.get('/from-team', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing')], getTeamAndUserFeedback);
+router.get('/from-team', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('Progressing', 'Done')], getTeamAndUserFeedback);
 
 module.exports = router;
