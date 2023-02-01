@@ -7,6 +7,9 @@ const {
 } = require('../../v1/auth/auth');
 
 // version 2 auth api
+const {
+    appleLogin
+} = require('./auth');
 
 // middlewares
 const {
@@ -15,5 +18,6 @@ const {
 
 // handler
 router.delete('/signOut', [userCheck], signOut);
+router.post('/', appleLogin);
 
 module.exports = router;
