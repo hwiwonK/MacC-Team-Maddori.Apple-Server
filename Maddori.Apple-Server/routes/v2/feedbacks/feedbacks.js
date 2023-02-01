@@ -225,12 +225,83 @@ const getTeamAndUserFeedback = async (req, res) => {
             message: "피드백 조회 실패",
             detail: error.message
         })
+    }   
+}
+
+/** request data :  user_id, team_id, 피드백을 받는 유저의 user_id
+    response data : reflection의 정보(id, reflection_name, date, state, team_id), 피드백을 받는 유저의 정보(user_id, nickname), 
+    피드백 type 별 feedback detail(id, keyword, content)
+    팀의 현재 회고에 담긴 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기 **/
+const getFromMeToCertainMemberFeedbackAll = async (req, res) => {
+    // console.log('특정 멤버에게 작성한 피드백 리스트 가져오기');
+    try {
+        const { reflection_id, team_id } = req.params;
+        const { members } = req.query;
+        const user_id = req.user_id;
+
+        // 팀이 진행 중인 현재 회고 id 가져오기
+        if (reflection_id !== 'current') throw Error('잘못된 요청 URI');
+        const currentReflectionId = await team.findByPk(team_id, {
+            attributes: ['current_reflection_id'],
+            raw: true
+        });
+        // 현재 회고 정보 가져오기
+        const currentReflection = await reflection.findByPk(currentReflectionId.current_reflection_id);
+
+        // 받는 user가 team에 속하는지 검증, 받는 user의 정보(id, nickname) 가져오기
+        const membersDetail = await userteam.findOne({
+            attributes: ['id', 'nickname'],
+            where: {
+                user_id: members,
+                team_id: team_id
+            },
+            raw: true
+        });
+        if (!membersDetail) throw Error('피드백을 받는 유저가 현재 팀에 속하지 않음');
+
+        // 현재 회고의 피드백 중 유저가 특정 멤버에게 작성한 피드백 정보 가져오기
+        const feedbacksToCertainMember = await feedback.findAll({
+            attributes: ['id', 'type', 'keyword', 'content'],
+            where: {
+                reflection_id: currentReflectionId.current_reflection_id,
+                from_id: user_id,
+                to_id: members
+            }
+        });
+
+        // response format
+        const feedbacksToCertainMemberGroupByType = {
+            'to_user': membersDetail,
+            'reflection': currentReflection,
+            'Continue': [],
+            'Stop': []
+        };
+
+        // 피드백의 type에 따라 피드백 분류하기
+        feedbacksToCertainMember.map((data) => {
+            const { type, to_user, reflection, ...contents } = data.dataValues;
+            feedbacksToCertainMemberGroupByType[type].push(contents);
+        });
+
+        res.status(200).json({
+            success: true,
+            message: '특정 멤버에게 작성한 피드백 목록 가져오기 성공',
+            detail: feedbacksToCertainMemberGroupByType
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '특정 멤버에게 작성한 피드백 목록 가져오기 실패',
+            detail: error.message
+        });
     }
-    
-};
+}
 
 module.exports = {
     getCertainTypeFeedbackAll,
     updateFeedback,
-    getTeamAndUserFeedback
+    getTeamAndUserFeedback,
+    getFromMeToCertainMemberFeedbackAll
 }
