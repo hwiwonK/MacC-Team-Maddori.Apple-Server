@@ -131,7 +131,44 @@ async function getCertainTeamDetail(req, res, next) {
     }
 }
 
+/** request data : user_id, team_id
+    response data : [user_id, nickname, role, profile_image_path]
+    팀에 속한 유저(멤버) 목록 가져오기 **/
+const getTeamMembers = async (req, res, next) => {
+    // console.log("팀 멤버 목록 가져오기");
+    const { team_id } = req.params;
+    try {
+        const user_id = req.user_id;
+        // 멤버 목록 가져오기
+        const teamMemberList = await userteam.findAll({
+            attributes: [['user_id', 'id'], 'nickname', 'role', 'profile_image_path'],
+            where: {
+                team_id : team_id
+            }  
+        });
+        // 일치하는 팀 정보가 없는 경우 에러 반환
+        if (teamMemberList.length === 0) { throw Error('팀이 존재하지 않음'); }
+
+        res.status(200).json({
+            success: true,
+            message: '팀의 멤버 목록 가져오기 성공',
+            detail: {
+                members : teamMemberList
+            }
+        });
+
+    } catch (error) {
+        // TODO: 에러 처리 수정
+        res.status(400).json({
+            success: false,
+            message: '팀의 멤버 목록 가져오기 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
     createTeam,
-    getCertainTeamDetail
+    getCertainTeamDetail,
+    getTeamMembers
 }

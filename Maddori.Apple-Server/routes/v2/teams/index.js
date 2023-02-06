@@ -9,7 +9,8 @@ const {
 // version 2 team api
 const {
     createTeam,
-    getCertainTeamDetail
+    getCertainTeamDetail,
+    getTeamMembers
 } = require('./teams');
 
 // middlewares
@@ -32,5 +33,6 @@ router.use('/', userCheck);
 router.get('/', getCertainTeamName);
 router.post('/', uploadFile, [validateTeamname, validateNickname], createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
+router.get('/:team_id/members', [userTeamCheck], getTeamMembers);
 
 module.exports = router;
