@@ -62,6 +62,30 @@ async function userJoinTeam(req, res, next) {
     }
 }
 
+const editProfile = async (req, res) => {
+    
+    const user_id = req.user_id;
+    const { team_id } = req.params;
+    const { nickname, role } = req.body;
+
+    try {
+
+        res.status(201).json({
+            success: true,
+            message: '유저 프로필 수정 성공',
+            detail: '수정된 프로필'
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '유저 프로필 수정 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
-    userJoinTeam
+    userJoinTeam,
+    editProfile
 };

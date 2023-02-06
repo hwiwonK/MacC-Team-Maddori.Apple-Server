@@ -8,7 +8,8 @@ const {
 
 // version 2 users api
 const {
-    userJoinTeam
+    userJoinTeam,
+    editProfile
 } = require('./users');
 
 // middlewares
@@ -30,5 +31,6 @@ router.use('/', userCheck);
 // handler
 router.post('/join-team/:team_id', uploadFile, [validateNickname], userJoinTeam);
 router.delete('/team/:team_id/leave', userLeaveTeam);
+router.put('/teams/:team_id/profile', editProfile);
 
 module.exports = router;
