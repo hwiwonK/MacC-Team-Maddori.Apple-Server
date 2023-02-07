@@ -31,6 +31,6 @@ router.use('/', userCheck);
 // handler
 router.post('/join-team/:team_id', uploadFile, [validateNickname], userJoinTeam);
 router.delete('/team/:team_id/leave', userLeaveTeam);
-router.put('/teams/:team_id/profile', uploadFile, [validateNickname], editProfile);
+router.put('/teams/:team_id/profile', userTeamCheck, uploadFile, [validateNickname], editProfile);
 
 module.exports = router;
