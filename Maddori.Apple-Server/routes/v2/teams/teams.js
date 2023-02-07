@@ -167,8 +167,30 @@ const getTeamMembers = async (req, res, next) => {
     }
 }
 
+const editTeamName = async (req, res, next) => {
+    const {team_id} = req.params;
+    const {team_name} = req.body;
+
+    try{
+
+        res.status(200).json({
+            success: true,
+            message: '팀 이름 수정 성공',
+            detail: '수정 결과'
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '팀 이름 수정 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
     createTeam,
     getCertainTeamDetail,
-    getTeamMembers
+    getTeamMembers,
+    editTeamName
 }
