@@ -1,4 +1,7 @@
 const {user, team, userteam, reflection, feedback} = require('../../../models');
+const fs = require('fs');
+const path = require('path');
+__basedir = path.resolve();
 
 // request data : user_id, team_id
 // response data : userteam_id, user_id, team_id
@@ -62,6 +65,75 @@ async function userJoinTeam(req, res, next) {
     }
 }
 
+const editProfile = async (req, res) => {
+    
+    const user_id = req.user_id;
+    const { team_id } = req.params;
+    const { nickname, role } = req.body;
+
+    try {
+        // 기존 이미지 삭제
+        const { profile_image_path } = await userteam.findOne({
+            attributes: ['profile_image_path'],
+            where: {
+                user_id: user_id,
+                team_id: team_id
+            },
+            raw: true
+        })
+
+        // 기존 이미지 파일이 서버에 존재한다면 삭제
+        const fullImagePath = __basedir + '/resources' + profile_image_path;
+        const changedImagePath = req.file ? req.file.path.split('resources')[1] : null;
+        // 기존 이미지 파일 삭제 실패한 경우 에러 반환, 기존 이미지 파일이 존재하지 않을 경우는 그대로 진행
+        try {
+            fs.unlinkSync(fullImagePath);
+        } catch (error) {
+            if (error.code !== 'ENOENT') {
+                fs.unlikeSync(changedImagePath);
+                return res.status(500).json({
+                    success: false,
+                    message: '유저 프로필 수정 실패',
+                    detail: '서버 오류'
+                })
+            }
+        }
+
+        // 프로필 수정 사항 반영
+        await userteam.update({
+            nickname: nickname,
+            role: role,
+            profile_image_path: changedImagePath
+        },{
+            where: {
+                user_id: user_id,
+                team_id: team_id
+        }});
+        // 수정된 프로필 조회 후 response
+        const editedProfile = await userteam.findOne({
+            attributes: [['user_id', 'id'], 'nickname', 'role', 'profile_image_path'],
+            where: {
+                user_id: user_id,
+                team_id: team_id
+            }
+        });
+
+        res.status(201).json({
+            success: true,
+            message: '유저 프로필 수정 성공',
+            detail: editedProfile
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '유저 프로필 수정 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
-    userJoinTeam
+    userJoinTeam,
+    editProfile
 };

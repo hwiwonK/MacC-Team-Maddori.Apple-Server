@@ -1,5 +1,6 @@
 const { text } = require('express');
 const { body, validationResult } = require('express-validator');
+const fs = require('fs');
 
 // 글자 수 제한 값
 const textLimit = {
@@ -97,6 +98,14 @@ const validateNickname = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            // uploadFile에서 서버에 저장된 프로필 이미지 파일 삭제
+            if (req.file) {
+                try {
+                    fs.unlinkSync(__basedir + '/resources' + req.file.path.split('resources')[1]);
+                } catch (error) {
+                    // console.log(error);
+                }
+            }
             return res.status(400).json({
                 success: false,
                 message: '입력 값의 형식이 잘못됨',
