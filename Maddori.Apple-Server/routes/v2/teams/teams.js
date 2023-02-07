@@ -167,8 +167,41 @@ const getTeamMembers = async (req, res, next) => {
     }
 }
 
+const editTeamName = async (req, res, next) => {
+    const {team_id} = req.params;
+    const {team_name} = req.body;
+
+    try{
+        // 팀 이름 수정
+        await team.update({
+            team_name: team_name
+        }, {
+            where: {
+                id: team_id
+            }
+        });
+        const editedTeam = await team.findByPk(team_id, {
+            attributes: ['id', 'team_name']
+        });
+
+        res.status(200).json({
+            success: true,
+            message: '팀 이름 수정 성공',
+            detail: editedTeam
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '팀 이름 수정 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
     createTeam,
     getCertainTeamDetail,
-    getTeamMembers
+    getTeamMembers,
+    editTeamName
 }
