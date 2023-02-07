@@ -35,6 +35,6 @@ router.get('/', getCertainTeamName);
 router.post('/', uploadFile, [validateTeamname, validateNickname], createTeam);
 router.get('/:team_id', [userTeamCheck], getCertainTeamDetail);
 router.get('/:team_id/members', [userTeamCheck], getTeamMembers);
-router.patch('/:team_id/team-name', [userTeamCheck], editTeamName);
+router.patch('/:team_id/team-name', [userTeamCheck, validateTeamname], editTeamName);
 
 module.exports = router;

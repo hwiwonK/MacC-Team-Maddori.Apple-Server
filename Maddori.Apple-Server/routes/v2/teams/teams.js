@@ -172,11 +172,22 @@ const editTeamName = async (req, res, next) => {
     const {team_name} = req.body;
 
     try{
+        // 팀 이름 수정
+        await team.update({
+            team_name: team_name
+        }, {
+            where: {
+                id: team_id
+            }
+        });
+        const editedTeam = await team.findByPk(team_id, {
+            attributes: ['id', 'team_name']
+        });
 
         res.status(200).json({
             success: true,
             message: '팀 이름 수정 성공',
-            detail: '수정 결과'
+            detail: editedTeam
         });
 
     } catch (error) {
