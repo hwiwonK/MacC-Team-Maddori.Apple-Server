@@ -1,4 +1,5 @@
 const {user, team, userteam, reflection, feedback} = require('../../../models');
+const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 __basedir = path.resolve();
@@ -133,7 +134,40 @@ const editProfile = async (req, res) => {
     }
 }
 
+const getUserTeamList = async (req, res) => {
+    
+    const user_id = req.user_id;
+    
+    try {
+        // 유저가 속한 팀의 id와 팀 name 가져오기
+        const userTeamList = await userteam.findAll({
+            attributes: [['team_id', 'id'], [Sequelize.literal('team_name'), 'team_name']],
+            where: {
+                user_id: user_id
+            },
+            include: {
+                attributes: [],
+                model: team
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: '유저의 팀 목록 가져오기 성공',
+            detail: userTeamList
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '유저의 팀 목록 가져오기 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
     userJoinTeam,
-    editProfile
+    editProfile,
+    getUserTeamList
 };
