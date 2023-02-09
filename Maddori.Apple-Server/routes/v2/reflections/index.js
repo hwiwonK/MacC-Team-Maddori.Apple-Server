@@ -10,7 +10,8 @@ const {
 // version 2 reflections api
 const {
     updateReflectionDetail,
-    endInProgressReflection
+    endInProgressReflection,
+    deleteReflectionDetail
 } = require('./reflections');
 
 // middlewares
@@ -33,5 +34,6 @@ router.patch('/:reflection_id/end', [userTeamCheck, teamReflectionRelationCheck,
 router.get('/', [userTeamCheck], getPastReflectionList);
 router.get('/current', [userTeamCheck, reflectionTimeCheck], getCurrentReflectionDetail);
 router.patch('/:reflection_id', [userTeamCheck, teamReflectionRelationCheck, reflectionTimeCheck, reflectionStateCheck('SettingRequired', 'Before'), validateReflectionname], updateReflectionDetail);
+router.delete('/:reflection_id', [userTeamCheck, teamReflectionRelationCheck, reflectionStateCheck('SettingRequired', 'Before')], deleteReflectionDetail);
 
 module.exports = router;
