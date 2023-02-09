@@ -101,7 +101,44 @@ const endInProgressReflection = async (req, res, next) => {
     }
 }
 
+// request data : user_id, team_id, reflection_id
+// response data : reflection_id, reflection_name, date, status
+// 팀의 멤버가 팀의 현재 회고의 디테일 정보를 초기화한다
+const deleteReflectionDetail = async (req, res, next) => {
+
+    try {
+        const user_id = req.user_id;
+        const { reflection_id } = req.params;
+
+        // 피드백 상세 정보 삭제 (reflection_name과 date를 null로 설정하고 state를 변경한다)
+        const updateReflectionSuccess = await reflection.update({
+            reflection_name: null,
+            date: null,
+            state: 'SettingRequired'
+        }, {
+            where: {
+                id: reflection_id,
+            },
+        });
+        const reflectionDetail = await reflection.findByPk(reflection_id);
+
+        res.status(200).json({
+            success: true,
+            message: '회고 디테일 정보 삭제 성공',
+            detail: reflectionDetail
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: '회고 디테일 정보 삭제 실패',
+            detail: error.message
+        });
+    }
+}
+
 module.exports = {
     updateReflectionDetail,
-    endInProgressReflection
+    endInProgressReflection,
+    deleteReflectionDetail
 };
