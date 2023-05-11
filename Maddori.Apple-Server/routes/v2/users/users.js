@@ -73,7 +73,7 @@ const editProfile = async (req, res) => {
     const { nickname, role } = req.body;
 
     try {
-        // 기존 이미지 삭제
+        // 기존 이미지 삭제 - 이미지 존재하는 경우에만
         const { profile_image_path } = await userteam.findOne({
             attributes: ['profile_image_path'],
             where: {
@@ -85,31 +85,46 @@ const editProfile = async (req, res) => {
 
         // 기존 이미지 파일이 서버에 존재한다면 삭제
         const fullImagePath = __basedir + '/resources' + profile_image_path;
-        const changedImagePath = req.file ? req.file.path.split('resources')[1] : null;
+        const changedImagePath = req.file ? req.file.path.split('resources')[1] : profile_image_path;
         // 기존 이미지 파일 삭제 실패한 경우 에러 반환, 기존 이미지 파일이 존재하지 않을 경우는 그대로 진행
-        try {
-            fs.unlinkSync(fullImagePath);
-        } catch (error) {
-            if (error.code !== 'ENOENT') {
-                fs.unlikeSync(changedImagePath);
-                return res.status(500).json({
-                    success: false,
-                    message: '유저 프로필 수정 실패',
-                    detail: '서버 오류'
-                })
+
+        // 이미지 변경 있을 경우
+        if (changedImagePath != profile_image_path) {
+            try {
+                fs.unlinkSync(fullImagePath);
+            } catch (error) {
+                if (error.code !== 'ENOENT') {
+                    fs.unlikeSync(changedImagePath);
+                    return res.status(500).json({
+                        success: false,
+                        message: '유저 프로필 수정 실패',
+                        detail: '서버 오류'
+                    })
+                }
             }
+            
         }
 
-        // 프로필 수정 사항 반영
-        await userteam.update({
-            nickname: nickname,
-            role: role,
-            profile_image_path: changedImagePath
-        },{
+        // 프로필 정보(닉네임, 역할) 업데이트
+        const userProfile = await userteam.findOne({
             where: {
                 user_id: user_id,
                 team_id: team_id
-        }});
+            }
+        });
+        userProfile.set({
+            nickname: nickname,
+            role: role
+        });
+
+        // 이미지 변경 있는 경우 이미지 정보 업데이트
+        userProfile.set({
+            profile_image_path: changedImagePath
+        });
+
+        // 프로필 수정 사항 반영
+        await userProfile.save();
+
         // 수정된 프로필 조회 후 response
         const editedProfile = await userteam.findOne({
             attributes: [['user_id', 'id'], 'nickname', 'role', 'profile_image_path'],
