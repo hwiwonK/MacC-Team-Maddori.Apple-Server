@@ -156,7 +156,7 @@ const getUserTeamList = async (req, res) => {
     try {
         // 유저가 속한 팀의 id와 팀 name 가져오기
         const userTeamList = await userteam.findAll({
-            attributes: [['team_id', 'id'], [Sequelize.literal('team_name'), 'team_name']],
+            attributes: [['team_id', 'id'], [Sequelize.literal('team_name'), 'team_name'], 'nickname'],
             where: {
                 user_id: user_id
             },
